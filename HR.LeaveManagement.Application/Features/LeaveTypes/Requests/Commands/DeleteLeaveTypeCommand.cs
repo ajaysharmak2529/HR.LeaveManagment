@@ -1,6 +1,6 @@
 ﻿using MediatR;
 
-namespace HR.LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
+namespace HR.LeaveManagement.Application.Features.LeaveTypes.Requests.Commands
 {
     public class DeleteLeaveTypeCommand : IRequest
     {
