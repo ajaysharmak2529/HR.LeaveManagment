@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
-namespace HR.LeaveManagement.Application.Persistence.Contracts
+namespace HR.LeaveManagement.Application.Contracts.Persistence
 {
     public interface ILeaveRequestRepository : IGenericRepository<LeaveRequest>
     {
