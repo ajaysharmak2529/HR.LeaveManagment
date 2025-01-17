@@ -1,7 +1,9 @@
 ﻿using AutoMapper;
+using HR.LeaveManagement.Application.Contracts;
 using HR.LeaveManagement.Application.Contracts.Persistence;
 using HR.LeaveManagement.Application.DTOs.LeaveRequest.Validators;
 using HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Commands;
+using HR.LeaveManagement.Application.Models;
 using HR.LeaveManagement.Application.Responses;
 using MediatR;
 using System.Linq;
@@ -13,12 +15,14 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
     public class CreateLeaveRequestCommandHandler : IRequestHandler<CreateLeaveRequestCommand, BaseCommandResponse>
     {
         private readonly ILeaveRequestRepository _leaveRequestRepository;
+        private readonly IEmailSender _emailSender;
         private readonly ILeaveTypeRepository _leaveTypeRepository;
         private readonly IMapper _mapper;
 
-        public CreateLeaveRequestCommandHandler(ILeaveRequestRepository leaveRequestRepository, ILeaveTypeRepository leaveTypeRepository, IMapper mapper)
+        public CreateLeaveRequestCommandHandler(ILeaveRequestRepository leaveRequestRepository,IEmailSender emailSender, ILeaveTypeRepository leaveTypeRepository, IMapper mapper)
         {
             _leaveRequestRepository = leaveRequestRepository;
+            _emailSender = emailSender;
             _leaveTypeRepository = leaveTypeRepository;
             _mapper = mapper;
         }
@@ -42,6 +46,21 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
             response.Success = true;
             response.Message = "Leave Request Created Successfully";
             response.Id = leaveRequest.Id;
+
+            var email = new Email
+            {
+                Body = $"Your leave request for {leaveRequest.StartDate:D} to {leaveRequest.EndDate:D} is pending approval",
+                Subject = "Leave Request Application",
+                To = "admin@localhost"
+            };
+            try
+            {
+              await  _emailSender.SendEmailAsync(email);
+            }
+            catch (System.Exception ex)
+            {
+                // Log error or handle exception, but don't throw
+            }
 
             return response;
         }

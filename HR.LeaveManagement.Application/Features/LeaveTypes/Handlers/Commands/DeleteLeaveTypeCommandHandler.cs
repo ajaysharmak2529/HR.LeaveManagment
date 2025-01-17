@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace HR.LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
 {
-    public class DeleteLeaveTypeCommandHandler : IRequestHandler<DeleteLeaveTypeCommand>
+    public class DeleteLeaveTypeCommandHandler : IRequestHandler<DeleteLeaveTypeRequestCommand>
     {
         private readonly ILeaveTypeRepository _leaveTypeRepository;
 
@@ -16,7 +16,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
         {
             _leaveTypeRepository = leaveTypeRepository;
         }
-        public async Task<Unit> Handle(DeleteLeaveTypeCommand request, CancellationToken cancellationToken)
+        public async Task<Unit> Handle(DeleteLeaveTypeRequestCommand request, CancellationToken cancellationToken)
         {
             var leaveType = await _leaveTypeRepository.GetAsync(request.Id);
 
