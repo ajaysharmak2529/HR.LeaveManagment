@@ -13,20 +13,18 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
 {
     public class UpdateLeaveAllocationCommandHandler : IRequestHandler<UpdateLeaveAllocationCommand, BaseCommandResponse>
     {
-        private readonly ILeaveAllocationRepository _leaveAllocationRepository;
-        private readonly ILeaveTypeRepository _leaveTypeRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public UpdateLeaveAllocationCommandHandler(ILeaveAllocationRepository leaveAllocationRepository,ILeaveTypeRepository leaveTypeRepository, IMapper mapper)
+        public UpdateLeaveAllocationCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _leaveAllocationRepository = leaveAllocationRepository;
-            _leaveTypeRepository = leaveTypeRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
         public async Task<BaseCommandResponse> Handle(UpdateLeaveAllocationCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseCommandResponse();
-            var validate = new UpdateLeaveAllocationDtoValidator(_leaveTypeRepository);
+            var validate = new UpdateLeaveAllocationDtoValidator(_unitOfWork.LeaveTypes);
             var validationResult = await validate.ValidateAsync(request.LeaveAllocationDto, cancellationToken);
 
             if (!validationResult.IsValid)
@@ -37,9 +35,9 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
                 return response;
             }
 
-            var leaveAllocation = await _leaveAllocationRepository.GetAsync(request.LeaveAllocationDto.Id);
+            var leaveAllocation = await _unitOfWork.LeaveAllocations.GetAsync(request.LeaveAllocationDto.Id);
             _mapper.Map(request.LeaveAllocationDto, leaveAllocation);
-            await _leaveAllocationRepository.UpdateAsync(leaveAllocation);
+            await _unitOfWork.LeaveAllocations.UpdateAsync(leaveAllocation);
 
             response.Success = true;
             response.Message = "Leave Allocation Updated Successfully";

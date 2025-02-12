@@ -14,22 +14,20 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
 {
     public class CreateLeaveRequestCommandHandler : IRequestHandler<CreateLeaveRequestCommand, BaseCommandResponse>
     {
-        private readonly ILeaveRequestRepository _leaveRequestRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IEmailSender _emailSender;
-        private readonly ILeaveTypeRepository _leaveTypeRepository;
         private readonly IMapper _mapper;
 
-        public CreateLeaveRequestCommandHandler(ILeaveRequestRepository leaveRequestRepository,IEmailSender emailSender, ILeaveTypeRepository leaveTypeRepository, IMapper mapper)
+        public CreateLeaveRequestCommandHandler(IUnitOfWork unitOfWork,IEmailSender emailSender, IMapper mapper)
         {
-            _leaveRequestRepository = leaveRequestRepository;
+            _unitOfWork = unitOfWork;
             _emailSender = emailSender;
-            _leaveTypeRepository = leaveTypeRepository;
             _mapper = mapper;
         }
         public async Task<BaseCommandResponse> Handle(CreateLeaveRequestCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseCommandResponse();
-            var validate = new CreateLeaveRequestDtoValidator(_leaveTypeRepository);
+            var validate = new CreateLeaveRequestDtoValidator(_unitOfWork.LeaveTypes);
             var validationResult = await validate.ValidateAsync(request.LeaveRequestDto, cancellationToken);
 
             if (!validationResult.IsValid)
@@ -41,7 +39,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
             }
 
             var leaveRequest = _mapper.Map<Domain.LeaveRequest>(request.LeaveRequestDto);
-            leaveRequest = await _leaveRequestRepository.AddAsync(leaveRequest);
+            leaveRequest = await _unitOfWork.LeaveRequests.AddAsync(leaveRequest);
 
             response.Success = true;
             response.Message = "Leave Request Created Successfully";

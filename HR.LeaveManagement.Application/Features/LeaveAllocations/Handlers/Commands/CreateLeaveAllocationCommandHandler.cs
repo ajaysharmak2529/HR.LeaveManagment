@@ -12,20 +12,18 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
 {
     public class CreateLeaveAllocationCommandHandler : IRequestHandler<CreateLeaveAllocationCommand, BaseCommandResponse>
     {
-        private readonly ILeaveAllocationRepository _leaveAllocationRepository;
-        private readonly ILeaveTypeRepository _leaveTypeRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public CreateLeaveAllocationCommandHandler(ILeaveAllocationRepository leaveAllocationRepository,ILeaveTypeRepository leaveTypeRepository, IMapper mapper)
+        public CreateLeaveAllocationCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _leaveAllocationRepository = leaveAllocationRepository;
-            _leaveTypeRepository = leaveTypeRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
         public async Task<BaseCommandResponse> Handle(CreateLeaveAllocationCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseCommandResponse();
-            var validate = new CreateLeaveAllocationDtoValidator(_leaveTypeRepository);
+            var validate = new CreateLeaveAllocationDtoValidator(_unitOfWork.LeaveTypes);
             var validationResult = await validate.ValidateAsync(request.LeaveAllocationDto, cancellationToken);
 
             if (!validationResult.IsValid)
@@ -37,7 +35,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
             }
 
             var leaveAllocation = _mapper.Map<Domain.LeaveAllocation>(request.LeaveAllocationDto);
-            leaveAllocation = await _leaveAllocationRepository.AddAsync(leaveAllocation);
+            leaveAllocation = await _unitOfWork.LeaveAllocations.AddAsync(leaveAllocation);
 
             response.Success = true;
             response.Message = "Leave Allocation Created Successfully";

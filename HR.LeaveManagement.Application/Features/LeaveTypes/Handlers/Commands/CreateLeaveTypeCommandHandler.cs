@@ -12,33 +12,39 @@ namespace HR.LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
 {
     public class CreateLeaveTypeCommandHandler : IRequestHandler<CreateLeaveTypeCommand, BaseCommandResponse>
     {
-        private readonly ILeaveTypeRepository _leaveTypeRepository;
+        private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
 
-        public CreateLeaveTypeCommandHandler(ILeaveTypeRepository leaveTypeRepository, IMapper mapper)
+        public CreateLeaveTypeCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
         {
-            _leaveTypeRepository = leaveTypeRepository;
+            _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
         public async Task<BaseCommandResponse> Handle(CreateLeaveTypeCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseCommandResponse();
-            var validate = new CreateLeaveTypeDtoValidator();
-            var validationResult = await validate.ValidateAsync(request.LeaveTypeDto, cancellationToken);
-
-            if (!validationResult.IsValid)
+            try
             {
-                response.Success = false;
-                response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
-                response.Message = "Validation failed";
-                return response;
+                var validate = new CreateLeaveTypeDtoValidator();
+                var validationResult = await validate.ValidateAsync(request.LeaveTypeDto, cancellationToken);
+
+                if (!validationResult.IsValid)
+                {
+                    response.Success = false;
+                    response.Errors = validationResult.Errors.Select(e => e.ErrorMessage).ToList();
+                    response.Message = "Validation failed";
+                    return response;
+                }
+
+                var leaveType = _mapper.Map<Domain.LeaveType>(request.LeaveTypeDto);
+                leaveType = await _unitOfWork.LeaveTypes.AddAsync(leaveType);
+
+                response.Success = true;
+                response.Id = leaveType.Id;
             }
-
-            var leaveType = _mapper.Map<Domain.LeaveType>(request.LeaveTypeDto);
-            leaveType = await _leaveTypeRepository.AddAsync(leaveType);
-
-            response.Success = true;
-            response.Id = leaveType.Id;
+            catch (System.Exception ex)
+            {
+            }
             response.Message = "Leave Type Created Successfully";
 
             return response;

@@ -10,6 +10,7 @@ namespace HR.LeaveManagement.Application
         {
             services.AddAutoMapper(Assembly.GetExecutingAssembly());
             services.AddMediatR(Assembly.GetExecutingAssembly());
+
             return services;
         }
     }

@@ -363,3 +363,5 @@ MigrationBackup/
 FodyWeavers.xsd
 /HR.LeaveManagement.Api/appsettings.json
 /HR.LeaveManagement.Api/appsettings.Development.json
+/HR.LeaveManagement.Api/appsettings.json
+/HR.LeaveManagement.Api/appsettings.Development.json

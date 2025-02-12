@@ -10,20 +10,20 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
 {
     public class DeleteLeaveAllocationRequestCommandHandler : IRequestHandler<DeleteLeaveAllocationRequestCommand>
     {
-        private readonly ILeaveAllocationRepository _leaveAllocationRepository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        public DeleteLeaveAllocationRequestCommandHandler(ILeaveAllocationRepository leaveAllocationRepository)
+        public DeleteLeaveAllocationRequestCommandHandler(IUnitOfWork unitOfWork)
         {
-            _leaveAllocationRepository = leaveAllocationRepository;
+            _unitOfWork = unitOfWork;
         }
         public async Task<Unit> Handle(DeleteLeaveAllocationRequestCommand request, CancellationToken cancellationToken)
         {
-            var leaveAllocation = await _leaveAllocationRepository.GetAsync(request.Id);
+            var leaveAllocation = await _unitOfWork.LeaveAllocations.GetAsync(request.Id);
 
             if (leaveAllocation is null)
                 throw new NotFoundException(nameof(LeaveAllocation), request.Id);
 
-            await _leaveAllocationRepository.DeleteAsync(leaveAllocation);
+            await _unitOfWork.LeaveAllocations.DeleteAsync(leaveAllocation);
             return Unit.Value;
         }
     }
