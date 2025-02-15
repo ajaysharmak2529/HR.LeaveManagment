@@ -1,4 +1,4 @@
-﻿using HR.LeaveManagement.Application.Contracts;
+﻿using HR.LeaveManagement.Application.Contracts.Infrastructure;
 using HR.LeaveManagement.Application.Models;
 using Microsoft.Extensions.Options;
 using SendGrid;
