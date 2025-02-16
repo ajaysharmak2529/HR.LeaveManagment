@@ -42,12 +42,12 @@ namespace HR.LeaveManagement.Identity.Services
                 throw new Exception($"Credentials for '{request.Email} aren't valid'.");
             }
 
-            JwtSecurityToken jwtSecurityToken = await GenerateToken(user);
+            var token = await GenerateToken(user);
 
             AuthResponse response = new AuthResponse
             {
                 Id = user.Id,
-                Token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+                Token = token,
                 Email = user.Email!,
                 UserName = user.UserName!
             };
@@ -95,7 +95,7 @@ namespace HR.LeaveManagement.Identity.Services
             }
         }
 
-        private async Task<JwtSecurityToken> GenerateToken(ApplicationUser user)
+        private async Task<string> GenerateToken(ApplicationUser user)
         {
             var userClaims = await _userManager.GetClaimsAsync(user);
             var roles = await _userManager.GetRolesAsync(user);
@@ -126,7 +126,9 @@ namespace HR.LeaveManagement.Identity.Services
                 claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes),
                 signingCredentials: signingCredentials);
-            return jwtSecurityToken;
+
+            var token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+            return token;
         }
     }
 }
