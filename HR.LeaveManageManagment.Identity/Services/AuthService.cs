@@ -74,6 +74,8 @@ namespace HR.LeaveManagement.Identity.Services
             };
 
             var existingEmail = await _userManager.FindByEmailAsync(request.Email);
+            var refreshToken = GenerateRefreshToken(user);
+            var accessToken = GenerateToken(user);
 
             if (existingEmail == null)
             {
@@ -82,7 +84,10 @@ namespace HR.LeaveManagement.Identity.Services
                 if (result.Succeeded)
                 {
                     await _userManager.AddToRoleAsync(user, "Employee");
-                    return new RegistrationResponse() { UserId = user.Id };
+                    return new RegistrationResponse() 
+                    { 
+                        UserId = user.Id 
+                    };
                 }
                 else
                 {
@@ -125,6 +130,29 @@ namespace HR.LeaveManagement.Identity.Services
                 audience: _jwtSettings.Audience,
                 claims: claims,
                 expires: DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes),
+                signingCredentials: signingCredentials);
+
+            var token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+            return token;
+        }
+        private  string GenerateRefreshToken(ApplicationUser user)
+        {
+
+            var roleClaims = new List<Claim>();
+
+            var claims = new[]
+            {
+                new Claim(CustomClaimTypes.Uid, user.Id)
+            };
+
+            var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));
+            var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
+
+            var jwtSecurityToken = new JwtSecurityToken(
+                issuer: _jwtSettings.Issuer,
+                audience: _jwtSettings.Audience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(_jwtSettings.RefreshTokenDurationInMinutes),
                 signingCredentials: signingCredentials);
 
             var token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
