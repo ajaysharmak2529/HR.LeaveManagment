@@ -42,14 +42,16 @@ namespace HR.LeaveManagement.Identity.Services
                 throw new Exception($"Credentials for '{request.Email} aren't valid'.");
             }
 
-            var token = await GenerateToken(user);
+            var accessToken = await GenerateToken(user);
+            var RefreshToken = GenerateRefreshToken(user);
 
             AuthResponse response = new AuthResponse
             {
                 Id = user.Id,
-                Token = token,
+                AccessToken = accessToken,
                 Email = user.Email!,
-                UserName = user.UserName!
+                UserName = user.UserName!,
+                RefreshToken = RefreshToken
             };
 
             return response;
@@ -74,19 +76,25 @@ namespace HR.LeaveManagement.Identity.Services
             };
 
             var existingEmail = await _userManager.FindByEmailAsync(request.Email);
-            var refreshToken = GenerateRefreshToken(user);
-            var accessToken = GenerateToken(user);
 
             if (existingEmail == null)
             {
-                var result = await _userManager.CreateAsync(user, request.Password);
 
+                var result = await _userManager.CreateAsync(user, request.Password);
                 if (result.Succeeded)
                 {
+                    var accessToken = await GenerateToken(user);
+                    var refreshToken = GenerateRefreshToken(user);
+                    user.RefreshToken = refreshToken;
+
+                    await _userManager.UpdateAsync(user);
+
                     await _userManager.AddToRoleAsync(user, "Employee");
-                    return new RegistrationResponse() 
-                    { 
-                        UserId = user.Id 
+                    return new RegistrationResponse()
+                    {
+                        UserId = user.Id,
+                        AccessToken = accessToken,
+                        RefreshToken = refreshToken
                     };
                 }
                 else
@@ -135,7 +143,7 @@ namespace HR.LeaveManagement.Identity.Services
             var token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
             return token;
         }
-        private  string GenerateRefreshToken(ApplicationUser user)
+        private string GenerateRefreshToken(ApplicationUser user)
         {
 
             var roleClaims = new List<Claim>();
