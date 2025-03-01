@@ -7,5 +7,7 @@ namespace HR.LeaveManagement.Application.Contracts.Identity
     {
         Task<RegistrationResponse> Register(RegistrationRequest request);
         Task<AuthResponse> Login(AuthRequest request);
+        Task LogOut();
+        Task<RefreshTokenResponse> RefreshUserToken(string refreshToken);
     }
 }

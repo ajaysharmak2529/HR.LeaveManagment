@@ -48,15 +48,15 @@ namespace HR.LeaveManagement.Identity.Services
             AuthResponse response = new AuthResponse
             {
                 Id = user.Id,
-                AccessToken = accessToken,
                 Email = user.Email!,
                 UserName = user.UserName!,
-                RefreshToken = RefreshToken
+                AccessToken = accessToken,
+                RefreshToken = RefreshToken,
+                ExpireAt = DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes)
             };
 
             return response;
         }
-
         public async Task<RegistrationResponse> Register(RegistrationRequest request)
         {
             var existingUser = await _userManager.FindByNameAsync(request.UserName);
@@ -107,7 +107,6 @@ namespace HR.LeaveManagement.Identity.Services
                 throw new Exception($"Email {request.Email} already exists.");
             }
         }
-
         private async Task<string> GenerateToken(ApplicationUser user)
         {
             var userClaims = await _userManager.GetClaimsAsync(user);
@@ -160,11 +159,50 @@ namespace HR.LeaveManagement.Identity.Services
                 issuer: _jwtSettings.Issuer,
                 audience: _jwtSettings.Audience,
                 claims: claims,
-                expires: DateTime.UtcNow.AddMinutes(_jwtSettings.RefreshTokenDurationInMinutes),
+                expires: DateTime.UtcNow.AddDays(_jwtSettings.RefreshTokenDurationInDays),
                 signingCredentials: signingCredentials);
 
             var token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
             return token;
+        }
+        public async Task<RefreshTokenResponse> RefreshUserToken(string refreshToken)
+        {
+            var JwtTokenValidator = new JwtSecurityTokenHandler();
+            var validationResult = await JwtTokenValidator.ValidateTokenAsync(refreshToken, new TokenValidationParameters { });
+            var response = new RefreshTokenResponse();
+            if (validationResult.IsValid)
+            {
+                var JwtSecurityToken = JwtTokenValidator.ReadJwtToken(refreshToken);
+
+                var userId = JwtSecurityToken.Claims.FirstOrDefault(x => x.Type == CustomClaimTypes.Uid)?.Value;
+                var user = await _userManager.FindByIdAsync(userId!);
+                if (user != null)
+                {
+                    var accessToken = await GenerateToken(user!);
+                    var newRefreshToken = GenerateRefreshToken(user!);
+
+                    user.RefreshToken = newRefreshToken;
+                    await _userManager.UpdateAsync(user);
+
+                    response.AccessToken = accessToken;
+                    response.RefreshToken = newRefreshToken;
+                    response.Success = true;
+                }
+                else
+                {
+                    response.Message = "User not found.";
+                }
+            }
+            else
+            {
+                response.Message = "Invalid token or token has been expired.";
+            }
+            return response;
+        }
+
+        public async Task LogOut()
+        {
+            await _signInManager.SignOutAsync();
         }
     }
 }

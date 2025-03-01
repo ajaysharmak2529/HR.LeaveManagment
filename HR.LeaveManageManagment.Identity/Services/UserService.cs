@@ -25,7 +25,6 @@ namespace HR.LeaveManagement.Identity.Services
                 LastName = employee?.LastName!
             };
         }
-
         public async Task<List<Employee>> GetEmployees()
         {
             var employees = await _userManager.GetUsersInRoleAsync("Employee");

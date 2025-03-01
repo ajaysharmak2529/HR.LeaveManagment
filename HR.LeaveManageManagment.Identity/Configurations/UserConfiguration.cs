@@ -20,7 +20,7 @@ namespace HR.LeaveManagement.Identity.Configurations
                      LastName = "Admin",
                      UserName = "admin",
                      NormalizedUserName = "ADMIN@LOCALHOST.COM",
-                     PasswordHash = hasher.HashPassword(null, "Password@123"),
+                     PasswordHash = hasher.HashPassword(null!, "Password@123"),
                      EmailConfirmed = true
                  },
                  new ApplicationUser
@@ -32,7 +32,7 @@ namespace HR.LeaveManagement.Identity.Configurations
                      LastName = "User",
                      UserName = "user",
                      NormalizedUserName = "USER@LOCALHOST.COM",
-                     PasswordHash = hasher.HashPassword(null, "Password@123"),
+                     PasswordHash = hasher.HashPassword(null!, "Password@123"),
                      EmailConfirmed = true
                  }
             );
