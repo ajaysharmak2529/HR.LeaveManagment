@@ -10,5 +10,9 @@
   </PropertyGroup>
   <ItemGroup>
     <Folder Include="src\Components\" />
+    <Folder Include="src\Pages\" />
+    <Folder Include="src\Types\" />
+    <Folder Include="src\Redux\Slices\" />
+    <Folder Include="src\Redux\Store\" />
   </ItemGroup>
 </Project>
