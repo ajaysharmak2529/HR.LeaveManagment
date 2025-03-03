@@ -34,7 +34,7 @@ namespace HR.LeaveManagement.Api.Controllers
             {
                 return BadRequest(new {result.Success, result.Message });
             }
-            return Ok(result);
+            return Ok(new { result.Success,result.AccessToken, result.RefreshToken});
         }
         
         [HttpPost("logout")]

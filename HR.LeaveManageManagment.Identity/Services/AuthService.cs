@@ -167,35 +167,34 @@ namespace HR.LeaveManagement.Identity.Services
         }
         public async Task<RefreshTokenResponse> RefreshUserToken(string refreshToken)
         {
-            var JwtTokenValidator = new JwtSecurityTokenHandler();
-            var validationResult = await JwtTokenValidator.ValidateTokenAsync(refreshToken, new TokenValidationParameters { });
             var response = new RefreshTokenResponse();
-            if (validationResult.IsValid)
+            var tokenValidationParameters = new TokenValidationParameters
             {
-                var JwtSecurityToken = JwtTokenValidator.ReadJwtToken(refreshToken);
+                ValidateIssuerSigningKey = true,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key)),
+                ValidateIssuer = true, // Set to true if validating issuer
+                ValidateAudience = true, // Set to true if validating audience
+            };
+            var JwtTokenValidator = new JwtSecurityTokenHandler();
+            var JwtSecurityToken = JwtTokenValidator.ReadJwtToken(refreshToken);
 
-                var userId = JwtSecurityToken.Claims.FirstOrDefault(x => x.Type == CustomClaimTypes.Uid)?.Value;
-                var user = await _userManager.FindByIdAsync(userId!);
-                if (user != null)
-                {
-                    var accessToken = await GenerateToken(user!);
-                    var newRefreshToken = GenerateRefreshToken(user!);
+            var userId = JwtSecurityToken.Claims.FirstOrDefault(x => x.Type == CustomClaimTypes.Uid)?.Value;
+            var user = await _userManager.FindByIdAsync(userId!);
+            if (user != null)
+            {
+                var accessToken = await GenerateToken(user!);
+                var newRefreshToken = GenerateRefreshToken(user!);
 
-                    user.RefreshToken = newRefreshToken;
-                    await _userManager.UpdateAsync(user);
+                user.RefreshToken = newRefreshToken;
+                await _userManager.UpdateAsync(user);
 
-                    response.AccessToken = accessToken;
-                    response.RefreshToken = newRefreshToken;
-                    response.Success = true;
-                }
-                else
-                {
-                    response.Message = "User not found.";
-                }
+                response.AccessToken = accessToken;
+                response.RefreshToken = newRefreshToken;
+                response.Success = true;
             }
             else
             {
-                response.Message = "Invalid token or token has been expired.";
+                response.Message = "Invalid token.";
             }
             return response;
         }
