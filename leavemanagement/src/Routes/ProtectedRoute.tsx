@@ -1,4 +1,4 @@
-import { ReactNode, PropsWithChildren, useEffect } from 'react';
+import { PropsWithChildren, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 import { ILogedInUser } from '../Types/LogedInUser';
@@ -6,16 +6,16 @@ import { ILogedInUser } from '../Types/LogedInUser';
 type ProtectedRouteProps = PropsWithChildren;
 
 
-const ProtectedRoute = ({ children }: ProtectedRouteProps) =>
-{
-    const LogedInUser: ILogedInUser = useSelector((state: any) => state.LogedInUser);
+const ProtectedRoute = ({ children }: ProtectedRouteProps) => {
+    const LogedInUser = useSelector((state: any) => state.LogedInUser);
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (LogedInUser.accessToken === "" || LogedInUser.accessToken === null) {
-            navigate("/Login");
+        console.log(LogedInUser);
+        if (LogedInUser?.accessToken === "" || LogedInUser?.accessToken === null) {
+            navigate("/SignUp");
         }
-    },[])
+    }, [])
     return children;
 
 }
