@@ -1,7 +1,7 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom"
 import ProtectedRoute from "./ProtectedRoute";
 import LeaveType from "../Pages/LeaveType";
-import SignUp from "../Pages/SignUp.1";
+import SignUp from "../Pages/SignUp";
 
 const AppRoutes = () => {
     return (

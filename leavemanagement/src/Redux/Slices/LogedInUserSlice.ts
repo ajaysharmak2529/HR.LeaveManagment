@@ -3,13 +3,11 @@ import { ILogedInUser, ILogedInUserSlice } from "../../Types/LogedInUser"
 import secureLocalStorage from "react-secure-storage"
 
 const initialState: ILogedInUser = {
-    id: 0,
+    id: "",
     email: "",
     userName:"",
-    firstName: "",
-    lastName: "",
     accessToken: "",
-    refeshToken: new String(secureLocalStorage.getItem("refreshToken")) ?? "",
+    refreshToken: secureLocalStorage.getItem("refreshToken")?.toString() ?? "",
     userTheme: localStorage.getItem("theme") ?? "light"
 };
 
@@ -18,23 +16,22 @@ const LogedInUserSlice = createSlice({
     initialState,
     reducers: {
         setLogedInUser: (state, action: PayloadAction<ILogedInUserSlice>) => {
+
+            console.log("Payload Access Token: ", action.payload.accessToken);
+
             state.id = action.payload.id;
             state.email = action.payload.email;
             state.userName = action.payload.userName;
-            state.firstName = action.payload.firstName;
-            state.lastName = action.payload.lastName;
-            state.accessToken = action.payload.accessToken;
-            state.refeshToken = action.payload.refeshToken;
-            secureLocalStorage.setItem("refreshToken", action.payload.refeshToken!)
+            state.accessToken = action.payload.accessToken!;
+            state.refreshToken = action.payload.refreshToken!;
+            secureLocalStorage.setItem("refreshToken", action.payload.refreshToken!)
         },
         logout: (state) => {
-            state.id = 0;
+            state.id = "";
             state.email = null;
             state.userName = null;
-            state.firstName = null;
-            state.lastName = null;
             state.accessToken = null;
-            state.refeshToken = null;
+            state.refreshToken = "";
             secureLocalStorage.removeItem("refreshToken")
         },
         setTheme: (state, action: PayloadAction<string>) => {

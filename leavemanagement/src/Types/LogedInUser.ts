@@ -1,20 +1,29 @@
 export interface ILogedInUser {
-    id: number | null;
-    email: String | null;
-    userName: String | null;
-    firstName: String | null;
-    lastName: String | null;
-    accessToken: String | null;
-    refeshToken: String | null;
-    userTheme: String | null;
+    id: string | null;
+    email: string | null;
+    userName: string | null;
+    accessToken: string | null;
+    refreshToken: string;
+    userTheme: string | null;
 }
 
 export interface ILogedInUserSlice {
-    id: number | null;
-    email: String | null;
-    userName: String | null;
-    firstName: String | null;
-    lastName: String | null;
-    accessToken: String | null;
-    refeshToken: String | null;
+    id: string | null;
+    email: string | null;
+    userTheme: string | null;
+    userName: string | null;
+    accessToken: string | null;
+    refreshToken: string | null;
+}
+
+export interface ILogin{
+    email: string;
+    password: string;
+}
+export interface ISignUp {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    confirmPassword: string;
 }
