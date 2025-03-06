@@ -57,7 +57,7 @@ namespace HR.LeaveManagement.Identity.Services
 
             return response;
         }
-        public async Task<RegistrationResponse> Register(RegistrationRequest request)
+        public async Task<AuthResponse> Register(RegistrationRequest request)
         {
             var existingUser = await _userManager.FindByNameAsync(request.UserName);
 
@@ -90,11 +90,15 @@ namespace HR.LeaveManagement.Identity.Services
                     await _userManager.UpdateAsync(user);
 
                     await _userManager.AddToRoleAsync(user, "Employee");
-                    return new RegistrationResponse()
+                    return new AuthResponse()
                     {
-                        UserId = user.Id,
+                        Id = user.Id,
+                        UserName = user.UserName,
+                        Email= user.Email,
                         AccessToken = accessToken,
-                        RefreshToken = refreshToken
+                        RefreshToken = refreshToken,
+                        ExpireAt = DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes)
+
                     };
                 }
                 else
@@ -165,9 +169,9 @@ namespace HR.LeaveManagement.Identity.Services
             var token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
             return token;
         }
-        public async Task<RefreshTokenResponse> RefreshUserToken(string refreshToken)
+        public async Task<AuthResponse> RefreshUserToken(string refreshToken)
         {
-            var response = new RefreshTokenResponse();
+            var response = new AuthResponse();
             var tokenValidationParameters = new TokenValidationParameters
             {
                 ValidateIssuerSigningKey = true,
@@ -190,12 +194,12 @@ namespace HR.LeaveManagement.Identity.Services
 
                 response.AccessToken = accessToken;
                 response.RefreshToken = newRefreshToken;
-                response.Success = true;
+                response.Id = user.Id;
+                response.UserName = user.UserName!;
+                response.Email = user.Email!;
+
             }
-            else
-            {
-                response.Message = "Invalid token.";
-            }
+
             return response;
         }
 

@@ -30,11 +30,8 @@ namespace HR.LeaveManagement.Api.Controllers
         public async Task<IActionResult> Refresh([FromQuery] string refreshToken)
         {
             var result = await _authService.RefreshUserToken(refreshToken);
-            if (!result.Success)
-            {
-                return BadRequest(new {result.Success, result.Message });
-            }
-            return Ok(new { result.Success,result.AccessToken, result.RefreshToken});
+            
+            return Ok(result);
         }
         
         [HttpPost("logout")]

@@ -17,8 +17,6 @@ const LogedInUserSlice = createSlice({
     reducers: {
         setLogedInUser: (state, action: PayloadAction<ILogedInUserSlice>) => {
 
-            console.log("Payload Access Token: ", action.payload.accessToken);
-
             state.id = action.payload.id;
             state.email = action.payload.email;
             state.userName = action.payload.userName;
@@ -28,9 +26,9 @@ const LogedInUserSlice = createSlice({
         },
         logout: (state) => {
             state.id = "";
-            state.email = null;
-            state.userName = null;
-            state.accessToken = null;
+            state.email = "";
+            state.userName = "";
+            state.accessToken = "";
             state.refreshToken = "";
             secureLocalStorage.removeItem("refreshToken")
         },

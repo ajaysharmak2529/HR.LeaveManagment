@@ -6,13 +6,14 @@ import { useLoginMutation, useSignupMutation } from "../Services/Auth.Service";
 import { ISignUp, ILogin, ILogedInUserSlice } from "../Types/LogedInUser"
 
 interface State { sigin: ILogin, signup: ISignUp }
-const initialState: State = { sigin: { email: "", password: "" }, signup: { email: "", firstName: "", lastName: "", password: "", confirmPassword: "" } };
+const initialState: State = { sigin: { email: "", password: "" }, signup: { email: "", firstName: "", lastName: "", userName:"", password: "", confirmPassword: "" } };
 
 const SignUp = () => {
 
     const [tab, setTab] = useState('signin');
     const [state, setState] = useState<State>(initialState);
-    const [login, { isLoading, isError, error }] = useLoginMutation();
+    const [login, { isLoading:isLoginLoading, isError:isLoginError, error:loginError }] = useLoginMutation();
+    const [signup, { isLoading:isSignUpLoading, isError:isSignUpError, error:signUpError }] = useSignupMutation();
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
@@ -21,13 +22,15 @@ const SignUp = () => {
 
         if (tab === 'signin') {
             login(state?.sigin).then(x => {
-                console.log("response: ",x.data)
                 dispatch(setLogedInUser(x.data));
                 navigate("/");
 
             });
-
+            console.log(signUpError);
         } else {
+            signup(state.signup).then(x => {
+                dispatch(setLogedInUser(x.data));
+                navigate("/"); });
 
         }
     };
@@ -59,6 +62,11 @@ const SignUp = () => {
                     </button>
                 </div>
 
+                {
+                    (isLoginError || isSignUpError) && (
+                        <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
+                            Error Temp                    
+                </span>)}
                 {/* Sign In Form */}
                 {tab === "signin" && (
                     <form className="space-y-4" onSubmit={handelFormSubmit}>
@@ -67,7 +75,7 @@ const SignUp = () => {
                             <input type="email"
                                 name="email"
                                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                placeholder="rajesh@email.com"
+                                placeholder="Ex. rajesh@email.com"
                                 onChange={handelOnChange}
                             />
                         </div>
@@ -86,41 +94,57 @@ const SignUp = () => {
                         {/*    </label>*/}
                         {/*    <a href="#" className="text-indigo-600 hover:underline">Forgot password?</a>*/}
                         {/*</div>*/}
-                        <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-lg shadow-md hover:shadow-lg transition" disabled={isLoading}>{isLoading ? "Proceesing ..." : "Sign In"}</button>
+                        <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-lg shadow-md hover:shadow-lg transition" disabled={isLoginLoading}>{isLoginLoading ? "Prosessing ..." : "Sign In"}</button>
                     </form>
                 )}
 
                 {/* Sign Up Form */}
                 {tab === "signup" && (
-                    <form className="space-y-4" onSubmit={handelFormSubmit}>
+                    <form className="space-y-2" onSubmit={handelFormSubmit}>
                         <div>
                             <label className="block text-gray-700 font-medium mb-1">First Name</label>
-                            <input type="text" name="firstName"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                placeholder="Rajesh Maheshwari"
+                            <input
+                                type="text"
+                                name="firstName"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                placeholder="Ex. Rajesh"
                                 onChange={handelOnChange}
                             />
                         </div>
                         <div>
                             <label className="block text-gray-700 font-medium mb-1">Last Name</label>
-                            <input type="text" name="lastName"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                placeholder="Rajesh Maheshwari"
+                            <input
+                                type="text"
+                                name="lastName"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                placeholder="Ex. Maheshwari"
+                                onChange={handelOnChange}
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-gray-700 font-medium mb-1">Username</label>
+                            <input
+                                type="text"
+                                name="username"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                placeholder="Ex. Rajesh_Maheshwari_2528"
                                 onChange={handelOnChange}
                             />
                         </div>
                         <div>
                             <label className="block text-gray-700 font-medium mb-1">Email</label>
-                            <input type="email" name="email"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
-                                placeholder="rajesh@email.com"
+                            <input
+                                type="email"
+                                name="email"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                placeholder="Ex. rajesh@email.com"
                                 onChange={handelOnChange}
                             />
                         </div>
                         <div>
                             <label className="block text-gray-700 font-medium mb-1">Password</label>
                             <input type="password" name="password"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                 placeholder="******"
                                 onChange={handelOnChange}
                             />
@@ -128,27 +152,14 @@ const SignUp = () => {
                         <div>
                             <label className="block text-gray-700 font-medium mb-1">Confirm Password</label>
                             <input type="password" name="confirmPassword"
-                                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
                                 placeholder="******"
                                 onChange={handelOnChange}
                             />
                         </div>
-                        <button className="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-lg shadow-md hover:shadow-lg transition">Sign Up</button>
+                        <button className="w-full mx-auto bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-lg shadow-md hover:shadow-lg transition">{isSignUpLoading?"Prosessing ...": "Sign Up"}</button>
                     </form>
-                )}
-
-                {/* Social Login */}
-                <div className="mt-6">
-                    <p className="text-center text-gray-500">Or continue with</p>
-                    <div className="mt-4 flex space-x-3">
-                        <button className="flex-1 bg-gray-100 hover:bg-gray-200 transition p-3 rounded-lg flex items-center justify-center">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/0/05/Facebook_Logo_%282019%29.png" className="h-5" alt="Facebook" />
-                        </button>
-                        <button className="flex-1 bg-gray-100 hover:bg-gray-200 transition p-3 rounded-lg flex items-center justify-center">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Octicons-mark-github.svg" className="h-5" alt="Github" />
-                        </button>
-                    </div>
-                </div>
+                )}                
             </div>
         </div>
     );

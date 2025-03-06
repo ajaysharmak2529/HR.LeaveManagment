@@ -16,8 +16,14 @@ export const authService = api.injectEndpoints({
                 method: 'POST',
                 body
             })
-        })
+        }),
+        refreshToken: builder.mutation({
+            query: (body) => ({
+                url: `/auth/refresh?refreshToken=${body}`,
+                method: 'POST',
+            })
+        }),
     })
 })
 
-export const { useLoginMutation, useSignupMutation } = authService;
+export const { useLoginMutation, useSignupMutation, useRefreshTokenMutation } = authService;
