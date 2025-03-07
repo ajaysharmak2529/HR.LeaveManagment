@@ -1,4 +1,5 @@
 ﻿using HR.LeaveManagement.Application.Contracts.Identity;
+using HR.LeaveManagement.Application.Models;
 using HR.LeaveManagement.Application.Models.Identity;
 using HR.LeaveManagement.Identity.Models;
 using Microsoft.AspNetCore.Identity;
@@ -14,27 +15,29 @@ namespace HR.LeaveManagement.Identity.Services
             _userManager = userManager;
         }
 
-        public async Task<Employee> GetEmployee(string userId)
+        public async Task<BaseResult<Employee>> GetEmployee(string userId)
         {
-            var employee = await _userManager.FindByIdAsync(userId);
-            return new Employee
+            var user = await _userManager.FindByIdAsync(userId);
+            var employee =  new Employee
             {
-                Email = employee?.Email!,
-                Id = employee?.Id!,
-                FirstName = employee?.FirstName!,
-                LastName = employee?.LastName!
+                Email = user?.Email!,
+                Id = user?.Id!,
+                FirstName = user?.FirstName!,
+                LastName = user?.LastName!
             };
+            return BaseResult<Employee>.Success(employee,string.Empty);
         }
-        public async Task<List<Employee>> GetEmployees()
+        public async Task<BaseResult<List<Employee>>> GetEmployees()
         {
-            var employees = await _userManager.GetUsersInRoleAsync("Employee");
-            return employees.Select(q => new Employee
+            var users = await _userManager.GetUsersInRoleAsync("Employee");
+            var  employees = users.Select(q => new Employee
             {
                 Id = q.Id,
                 Email = q.Email!,
                 FirstName = q.FirstName,
                 LastName = q.LastName
             }).ToList();
+            return BaseResult<List<Employee>>.Success(employees, string.Empty);
         }
     }
 }

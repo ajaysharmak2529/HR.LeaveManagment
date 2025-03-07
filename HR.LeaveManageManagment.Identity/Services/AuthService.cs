@@ -1,5 +1,6 @@
 ﻿using HR.LeaveManagement.Application.Constants;
 using HR.LeaveManagement.Application.Contracts.Identity;
+using HR.LeaveManagement.Application.Models;
 using HR.LeaveManagement.Application.Models.Identity;
 using HR.LeaveManagement.Identity.Models;
 using Microsoft.AspNetCore.Identity;
@@ -8,6 +9,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HR.LeaveManagement.Identity.Services
 {
@@ -26,26 +28,26 @@ namespace HR.LeaveManagement.Identity.Services
             _signInManager = signInManager;
         }
 
-        public async Task<AuthResponse> Login(AuthRequest request)
+        public async Task<BaseResult<AuthResponse>> Login(AuthRequest request)
         {
             var user = await _userManager.FindByEmailAsync(request.Email);
 
             if (user == null)
             {
-                throw new Exception($"User with {request.Email} not found.");
+                return BaseResult<AuthResponse>.Fail("Not found.", new string[] { $"No user registered with this email address \"{request.Email}\"." });
             }
 
-            var result = await _signInManager.PasswordSignInAsync(user.UserName, request.Password, false, lockoutOnFailure: false);
+            var result = await _signInManager.PasswordSignInAsync(user.UserName!, request.Password, false, lockoutOnFailure: false);
 
             if (!result.Succeeded)
             {
-                throw new Exception($"Credentials for '{request.Email} aren't valid'.");
+                return BaseResult<AuthResponse>.Fail("Login failed", new string[] { "Invalid credential detail." });
             }
 
             var accessToken = await GenerateToken(user);
             var RefreshToken = GenerateRefreshToken(user);
 
-            AuthResponse response = new AuthResponse
+            AuthResponse data = new AuthResponse
             {
                 Id = user.Id,
                 Email = user.Email!,
@@ -55,15 +57,15 @@ namespace HR.LeaveManagement.Identity.Services
                 ExpireAt = DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes)
             };
 
-            return response;
+            return BaseResult<AuthResponse>.Success(data, "Logged in successfully.");
         }
-        public async Task<AuthResponse> Register(RegistrationRequest request)
+        public async Task<BaseResult<AuthResponse>> Register(RegistrationRequest request)
         {
             var existingUser = await _userManager.FindByNameAsync(request.UserName);
 
             if (existingUser != null)
             {
-                throw new Exception($"Username '{request.UserName}' already exists.");
+                return BaseResult<AuthResponse>.Fail("Failed to register", new string[] { "username is already exist." });
             }
 
             var user = new ApplicationUser
@@ -90,25 +92,26 @@ namespace HR.LeaveManagement.Identity.Services
                     await _userManager.UpdateAsync(user);
 
                     await _userManager.AddToRoleAsync(user, "Employee");
-                    return new AuthResponse()
+                    var data = new AuthResponse()
                     {
                         Id = user.Id,
                         UserName = user.UserName,
-                        Email= user.Email,
+                        Email = user.Email,
                         AccessToken = accessToken,
                         RefreshToken = refreshToken,
                         ExpireAt = DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes)
 
                     };
+                    return BaseResult<AuthResponse>.Success(data, "User registered successfully.");
                 }
                 else
                 {
-                    throw new Exception($"{result.Errors}");
+                    return BaseResult<AuthResponse>.Fail("Failed to register", result.Errors.Select(x => x.Description));
                 }
             }
             else
             {
-                throw new Exception($"Email {request.Email} already exists.");
+                return BaseResult<AuthResponse>.Fail("User already exist with provided email", new string[0]);
             }
         }
         private async Task<string> GenerateToken(ApplicationUser user)
@@ -169,38 +172,45 @@ namespace HR.LeaveManagement.Identity.Services
             var token = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
             return token;
         }
-        public async Task<AuthResponse> RefreshUserToken(string refreshToken)
+        public async Task<BaseResult<AuthResponse>> RefreshUserToken(string refreshToken)
         {
-            var response = new AuthResponse();
-            var tokenValidationParameters = new TokenValidationParameters
+            try
             {
-                ValidateIssuerSigningKey = true,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key)),
-                ValidateIssuer = true, // Set to true if validating issuer
-                ValidateAudience = true, // Set to true if validating audience
-            };
-            var JwtTokenValidator = new JwtSecurityTokenHandler();
-            var JwtSecurityToken = JwtTokenValidator.ReadJwtToken(refreshToken);
+                var response = new AuthResponse();
+                var tokenValidationParameters = new TokenValidationParameters
+                {
+                    ValidateIssuerSigningKey = true,
+                    IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key)),
+                    ValidateIssuer = true, // Set to true if validating issuer
+                    ValidateAudience = true, // Set to true if validating audience
+                };
+                var JwtTokenValidator = new JwtSecurityTokenHandler();
+                var JwtSecurityToken = JwtTokenValidator.ReadJwtToken(refreshToken);
 
-            var userId = JwtSecurityToken.Claims.FirstOrDefault(x => x.Type == CustomClaimTypes.Uid)?.Value;
-            var user = await _userManager.FindByIdAsync(userId!);
-            if (user != null)
+                var userId = JwtSecurityToken.Claims.FirstOrDefault(x => x.Type == CustomClaimTypes.Uid)?.Value;
+                var user = await _userManager.FindByIdAsync(userId!);
+                if (user != null)
+                {
+                    var accessToken = await GenerateToken(user!);
+                    var newRefreshToken = GenerateRefreshToken(user!);
+
+                    user.RefreshToken = newRefreshToken;
+                    await _userManager.UpdateAsync(user);
+
+                    response.AccessToken = accessToken;
+                    response.RefreshToken = newRefreshToken;
+                    response.Id = user.Id;
+                    response.UserName = user.UserName!;
+                    response.Email = user.Email!;
+
+                }
+                return BaseResult<AuthResponse>.Success(response, "Token refreshed successfully");
+            }
+            catch (Exception ex)
             {
-                var accessToken = await GenerateToken(user!);
-                var newRefreshToken = GenerateRefreshToken(user!);
-
-                user.RefreshToken = newRefreshToken;
-                await _userManager.UpdateAsync(user);
-
-                response.AccessToken = accessToken;
-                response.RefreshToken = newRefreshToken;
-                response.Id = user.Id;
-                response.UserName = user.UserName!;
-                response.Email = user.Email!;
-
+                return BaseResult<AuthResponse>.Fail("Failed To generate Token", new string[] { ex.Message });
             }
 
-            return response;
         }
 
         public async Task LogOut()
