@@ -3,17 +3,18 @@ import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { setLogedInUser } from "../Redux/Slices/LogedInUserSlice"
 import { useLoginMutation, useSignupMutation } from "../Services/Auth.Service";
-import { ISignUp, ILogin, ILogedInUserSlice } from "../Types/LogedInUser"
+import { ISignUp, ILogin, ILogedInUserSlice, ILogedInUser } from "../Types/LogedInUser"
+import { ApiResponse } from "../Types/ApiResponse";
 
 interface State { sigin: ILogin, signup: ISignUp }
-const initialState: State = { sigin: { email: "", password: "" }, signup: { email: "", firstName: "", lastName: "", userName:"", password: "", confirmPassword: "" } };
+const initialState: State = { sigin: { email: "", password: "" }, signup: { email: "", firstName: "", lastName: "", userName: "", password: "", confirmPassword: "" } };
 
 const SignUp = () => {
 
     const [tab, setTab] = useState('signin');
     const [state, setState] = useState<State>(initialState);
-    const [login, { isLoading:isLoginLoading, isError:isLoginError, error:loginError }] = useLoginMutation();
-    const [signup, { isLoading:isSignUpLoading, isError:isSignUpError, error:signUpError }] = useSignupMutation();
+    const [login, { isLoading: isLoginLoading, isError: isLoginError, error: loginError }] = useLoginMutation();
+    const [signup, { isLoading: isSignUpLoading, isError: isSignUpError, error: signUpError }] = useSignupMutation();
     const dispatch = useDispatch()
     const navigate = useNavigate()
 
@@ -22,16 +23,22 @@ const SignUp = () => {
 
         if (tab === 'signin') {
             login(state?.sigin).then(x => {
-                dispatch(setLogedInUser(x.data));
-                navigate("/");
+                const response = x.data as ApiResponse<ILogedInUserSlice>
 
+                if (response.isSuccess) {
+                    dispatch(setLogedInUser(response.data));
+                    navigate("/");
+                }
             });
-            console.log(signUpError);
         } else {
             signup(state.signup).then(x => {
-                dispatch(setLogedInUser(x.data));
-                navigate("/"); });
+                const response = x.data as ApiResponse<ILogedInUserSlice>
 
+                if (response.isSuccess) {
+                    dispatch(setLogedInUser(response.data));
+                    navigate("/");
+                }
+            });
         }
     };
     const handelOnChange = (e: ChangeEvent<HTMLInputElement>): void => {
@@ -65,8 +72,8 @@ const SignUp = () => {
                 {
                     (isLoginError || isSignUpError) && (
                         <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
-                            Error Temp                    
-                </span>)}
+                            Error Temp
+                        </span>)}
                 {/* Sign In Form */}
                 {tab === "signin" && (
                     <form className="space-y-4" onSubmit={handelFormSubmit}>
@@ -157,9 +164,9 @@ const SignUp = () => {
                                 onChange={handelOnChange}
                             />
                         </div>
-                        <button className="w-full mx-auto bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-lg shadow-md hover:shadow-lg transition">{isSignUpLoading?"Prosessing ...": "Sign Up"}</button>
+                        <button className="w-full mx-auto bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-3 rounded-lg shadow-md hover:shadow-lg transition">{isSignUpLoading ? "Prosessing ..." : "Sign Up"}</button>
                     </form>
-                )}                
+                )}
             </div>
         </div>
     );
