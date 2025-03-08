@@ -72,7 +72,7 @@ const SignUp = () => {
                 {
                     (isLoginError || isSignUpError) && (
                         <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
-                            Error Temp
+                            {isLoginError ? (loginError as any).error : isSignUpError ? (signUpError as any).error :""}
                         </span>)}
                 {/* Sign In Form */}
                 {tab === "signin" && (
