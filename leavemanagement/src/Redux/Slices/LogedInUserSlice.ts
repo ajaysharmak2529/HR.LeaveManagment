@@ -32,13 +32,28 @@ const LogedInUserSlice = createSlice({
             state.refreshToken = "";
             secureLocalStorage.removeItem("refreshToken")
         },
-        setTheme: (state, action: PayloadAction<string>) => {
-            state.userTheme = action.payload;
-            localStorage.setItem("theme", action.payload)
-        }
+        toggelTheme: (state) => {
+            state.userTheme = state.userTheme === "light" ? "dark" : "light";
+            localStorage.setItem("theme", state.userTheme)
+            if (state.userTheme === "dark") {
+                document.documentElement.classList.add("dark");
+            } else {
+                document.documentElement.classList.remove("dark");
+            }
+        },
+        initializeTheme: (state) => {
+
+            const theme = localStorage.getItem("theme")
+            state.userTheme = theme ||'light';
+            if (state.userTheme === "dark") {
+                document.documentElement.classList.add("dark");
+            } else {
+                document.documentElement.classList.remove("dark");
+            }
+        },
     }
 });
 
-export const { setLogedInUser, logout, setTheme } = LogedInUserSlice.actions;
+export const { setLogedInUser, logout, toggelTheme, initializeTheme } = LogedInUserSlice.actions;
 
 export default LogedInUserSlice;
