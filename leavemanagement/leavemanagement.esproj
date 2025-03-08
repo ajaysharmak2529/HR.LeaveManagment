@@ -9,6 +9,7 @@
     <BuildOutputFolder>$(MSBuildProjectDirectory)\dist</BuildOutputFolder>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="src\Pages\DashboardPages\" />
     <Folder Include="src\Types\" />
     <Folder Include="src\Redux\Slices\" />
     <Folder Include="src\Redux\Store\" />

@@ -4,7 +4,7 @@ import tailwindcss from '@tailwindcss/vite'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-    plugins: [plugin(), tailwindcss()],
+    plugins: [plugin(), tailwindcss(),],
     server: {
         port: 65523,
     },
@@ -16,6 +16,7 @@ export default defineConfig({
             "@store": "src/Redux/Store/",
             "@services": "src/Services",
             "@types": "src/Types",
+            "@icons": "src/icons",
         }
     }
 })
