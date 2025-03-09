@@ -1,6 +1,7 @@
 ﻿using HR.LeaveManagement.Application.DTOs.LeaveAllocation;
 using HR.LeaveManagement.Application.Features.LeaveAllocations.Requests.Commands;
 using HR.LeaveManagement.Application.Features.LeaveAllocations.Requests.Queries;
+using HR.LeaveManagement.Application.Models;
 using HR.LeaveManagement.Application.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -18,40 +19,89 @@ namespace HR.LeaveManagement.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IList<LeaveAllocationDto>>> Get()
+        [HttpGet("GetAll")]
+        public async Task<ActionResult> Get()
         {
-            var LeaveAllocations = await _mediator.Send(new GetLeaveAllocationListRequest());
-            return LeaveAllocations;
+            try
+            {
+                var LeaveAllocations = await _mediator.Send(new GetLeaveAllocationListRequest());
+                return Ok(ApiResponse<IList<LeaveAllocationDto>>.Success(LeaveAllocations, StatusCodes.Status200OK));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ApiResponse<IList<LeaveAllocationDto>>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+            }
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<LeaveAllocationDto>> Get(int id)
+        [HttpGet("{id}/Get")]
+        public async Task<ActionResult> Get(int id)
         {
-            var LeaveAllocations = await _mediator.Send(new GetLeaveAllocationDetailRequest());
-            return LeaveAllocations;
+            try
+            {
+                var LeaveAllocations = await _mediator.Send(new GetLeaveAllocationDetailRequest() { Id = id});
+                return Ok(ApiResponse<LeaveAllocationDto>.Success(LeaveAllocations, StatusCodes.Status200OK));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ApiResponse<LeaveAllocationDto>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+            }
         }
 
-        [HttpPost]
-        public async Task<ActionResult<BaseCommandResponse>> Post([FromBody] CreateLeaveAllocationDto LeaveAllocationDto)
+        [HttpPost("Create")]
+        public async Task<ActionResult> Post([FromBody] CreateLeaveAllocationDto LeaveAllocationDto)
         {
-            var LeaveAllocations = await _mediator.Send(new CreateLeaveAllocationCommand() { LeaveAllocationDto = LeaveAllocationDto });
-            return LeaveAllocations;
+            try
+            {
+                var LeaveAllocations = await _mediator.Send(new CreateLeaveAllocationCommand() { LeaveAllocationDto = LeaveAllocationDto });
+                if (LeaveAllocations.Success)
+                {
+                    return Ok(ApiResponse<string>.Success(LeaveAllocations.Message, StatusCodes.Status201Created));
+                }
+                else
+                {
+                    return BadRequest(ApiResponse<string>.Fail(LeaveAllocations.Message, StatusCodes.Status400BadRequest, LeaveAllocations.Errors));
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ApiResponse<LeaveAllocationDto>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+            }
         }
-        
 
-        [HttpPut]
+
+        [HttpPut("Update")]
         public async Task<ActionResult> Put([FromBody] UpdateLeaveAllocationDto LeaveAllocationDto)
         {
-            await _mediator.Send(new UpdateLeaveAllocationCommand() { LeaveAllocationDto = LeaveAllocationDto });
-            return NoContent();
+            try
+            {
+                var result = await _mediator.Send(new UpdateLeaveAllocationCommand() { LeaveAllocationDto = LeaveAllocationDto });
+                if (result.Success)
+                {
+                    return Ok(ApiResponse<string>.Success(result.Message, StatusCodes.Status200OK));
+                }
+                else
+                {
+                    return BadRequest(ApiResponse<string>.Fail(result.Message, StatusCodes.Status400BadRequest, result.Errors));
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ApiResponse<LeaveAllocationDto>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+            }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}/Delete")]
         public async Task<ActionResult> Delete(int id)
         {
-            await _mediator.Send(new DeleteLeaveAllocationRequestCommand() { Id = id });
-            return NoContent();
+            try
+            {
+                await _mediator.Send(new DeleteLeaveAllocationRequestCommand() { Id = id });
+                return Ok(ApiResponse<string>.Success(null!, StatusCodes.Status200OK, "Deleted successfully"));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ApiResponse<string>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+            }
         }
     }
 }

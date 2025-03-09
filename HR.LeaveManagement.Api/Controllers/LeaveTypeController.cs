@@ -1,6 +1,7 @@
 ﻿using HR.LeaveManagement.Application.DTOs.LeaveType;
 using HR.LeaveManagement.Application.Features.LeaveTypes.Requests.Commands;
 using HR.LeaveManagement.Application.Features.LeaveTypes.Requests.Queries;
+using HR.LeaveManagement.Application.Models;
 using HR.LeaveManagement.Application.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
@@ -18,39 +19,81 @@ namespace HR.LeaveManagement.Api.Controllers
             _mediator = mediator;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<IList<LeaveTypeDto>>> Get()
+        [HttpGet("GetAll")]
+        public async Task<ActionResult> Get()
         {
-            var leaveTypes = await _mediator.Send(new GetLeaveTypeListRequest());
-            return leaveTypes;
+            try
+            {
+                var leaveTypes = await _mediator.Send(new GetLeaveTypeListRequest());
+                return Ok(ApiResponse<IList<LeaveTypeDto>>.Success(leaveTypes, StatusCodes.Status200OK));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ApiResponse<IList<LeaveTypeDto>>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+            }
         }
 
-        [HttpGet("{id}")]
+        [HttpGet("{id}/Get")]
         public async Task<ActionResult<LeaveTypeDto>> Get(int id)
         {
-            var leaveTypes = await _mediator.Send(new GetLeaveTypeDetailRequest());
-            return leaveTypes;
+            try
+            {
+                var leaveTypes = await _mediator.Send(new GetLeaveTypeDetailRequest() { Id = id });
+                return Ok(ApiResponse<LeaveTypeDto>.Success(leaveTypes, StatusCodes.Status200OK));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ApiResponse<LeaveTypeDto>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+            }
         }
 
-        [HttpPost]
+        [HttpPost("Create")]
         public async Task<ActionResult<BaseCommandResponse>> Post([FromBody] CreateLeaveTypeDto leaveTypeDto)
         {
-            var leaveTypes = await _mediator.Send(new CreateLeaveTypeCommand() { LeaveTypeDto = leaveTypeDto });
-            return leaveTypes;
+            try
+            {
+                var result = await _mediator.Send(new CreateLeaveTypeCommand() { LeaveTypeDto = leaveTypeDto });
+                if (result.Success)
+                {
+                    return Ok(ApiResponse<BaseCommandResponse>.Success(result, StatusCodes.Status201Created,"Created successfully."));
+                }
+                else
+                {
+                    return BadRequest(ApiResponse<BaseCommandResponse>.Fail(result.Message, StatusCodes.Status400BadRequest, result.Errors));
+                }
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ApiResponse<BaseCommandResponse>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+            }
         }
 
-        [HttpPut]
+        [HttpPut("Update")]
         public async Task<ActionResult> Put([FromBody] LeaveTypeDto leaveTypeDto)
         {
-            await _mediator.Send(new UpdateLeaveTypeCommand() { LeaveTypeDto = leaveTypeDto });
-            return NoContent();
+            try
+            {
+                await _mediator.Send(new UpdateLeaveTypeCommand() { LeaveTypeDto = leaveTypeDto });
+                return Ok(ApiResponse<string>.Success(null!, StatusCodes.Status200OK,"Updated successfully."));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ApiResponse<string>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+            }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id}/Delete")]
         public async Task<ActionResult> Delete(int id)
         {
-            await _mediator.Send(new DeleteLeaveTypeRequestCommand() { Id = id });
-            return NoContent();
+            try
+            {
+                await _mediator.Send(new DeleteLeaveTypeRequestCommand() { Id = id });
+                return Ok(ApiResponse<string>.Success(null!, StatusCodes.Status200OK, "Deleted successfully."));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ApiResponse<string>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+            }
         }
     }
 }
