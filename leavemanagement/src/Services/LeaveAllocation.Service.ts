@@ -1,32 +1,33 @@
 import { api } from "../Redux/Api";
+import { ApiResponse } from "../Types/ApiResponse";
+import { LeaveAloocationType, CreateLeaveAllocation } from "../Types/LeaveAllocation.Type";
 
 const LeaveAllocationService = api.injectEndpoints({
     endpoints: (builder) => ({
-        getLeaveAllocarions: builder.query({
-            query: () => '/LaveAllocation'
+        getLeaveAllocarions: builder.query<ApiResponse<LeaveAloocationType[]>, string>({
+            query: () => '/LeaveAllocation/GetAll'
         }),
-        addAllocation: builder.mutation({
+        getAllocation: builder.query<ApiResponse<LeaveAloocationType>, number>({
+            query: (id) => `/LeaveAllocation/${id}/Get`
+        }),
+        addAllocation: builder.mutation<ApiResponse<string>, CreateLeaveAllocation>({
             query: (body) => ({
-                url: '/LaveAllocation',
+                url: '/LeaveAllocation/Create',
                 method: 'PAST',
                 body
             })
         }),
-        updateAllocation: builder.mutation({
+        updateAllocation: builder.mutation<ApiResponse<string>, any>({
             query: (body) => ({
-                url: '',
+                url: '/LeaveAllocation/Update',
                 method: 'PUT',
                 body
             })
         }),
-        getAllocation: builder.query({
-            query: (id: number) => `/LaveAllocation/${id}`
-        }),
-        deleteAllocation: builder.mutation({
-            query: (id:number) => ({
-                url: `/LaveAllocation/${id}`,
+        deleteAllocation: builder.mutation<ApiResponse<string>, number>({
+            query: (id) => ({
+                url: `/LeaveAllocation/${id}/Delete`,
                 method: 'DELETE',
-
             })
         })
     })

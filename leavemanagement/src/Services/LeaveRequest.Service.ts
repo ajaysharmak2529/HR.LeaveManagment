@@ -1,30 +1,32 @@
 import { api } from "../Redux/Api";
+import { ApiResponse } from "../Types/ApiResponse";
+import { CreateLeaveRequest, LeaveRequestType, UpdateLeaveRequest } from "../Types/LeaveRequest.Type";
 
 const LeaveRequestService = api.injectEndpoints({
     endpoints: (builder) => ({
-        getLeaveRequests: builder.query({
-            query: () => '/LeaveRequest'
+        getLeaveRequests: builder.query<ApiResponse<LeaveRequestType[]>, string>({
+            query: () => '/LeaveRequest/GetAll'
         }),
-        addLeaveRequest: builder.mutation({
+        getLeaveRequest: builder.query<ApiResponse<LeaveRequestType>, number>({
+            query: (id) => `/LeaveRequest/${id}/Get`
+        }),
+        addLeaveRequest: builder.mutation<ApiResponse<string>, CreateLeaveRequest>({
             query: (body) => ({
-                url: '/LeaveRequest',
+                url: '/LeaveRequest/Create',
                 method: 'POST',
-                body
+                body,                
             })
         }),
-        updateLeaveRequest: builder.mutation({
+        updateLeaveRequest: builder.mutation<ApiResponse<string>, UpdateLeaveRequest>({
             query: (body) => ({
-                url: '/LeaveRequest',
+                url: '/LeaveRequest/Update',
                 method: 'PUT',
                 body
             })
         }),
-        getLeaveRequest: builder.query({
-            query: (id: number) => `/LeaveRequest/${id}`
-        }),
-        deleteLeaveRequest: builder.mutation({
-            query: (id: number) => ({
-                url: `/LeaveRequest/${id}`,
+        deleteLeaveRequest: builder.mutation<ApiResponse<string>, number>({
+            query: (id) => ({
+                url: `/LeaveRequest/${id}/Delete`,
                 method: 'DELETE',
             })
         })
