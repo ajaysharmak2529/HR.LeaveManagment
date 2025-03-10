@@ -18,7 +18,7 @@ namespace HR.LeaveManagement.Api.Controllers
             _userService = userService;
         }
 
-        [HttpGet("me")]
+        [HttpGet("{userId}/Get")]
         public async Task<IActionResult> Me(string userId)
         {
             var result = await _userService.GetEmployee(userId);
@@ -27,7 +27,7 @@ namespace HR.LeaveManagement.Api.Controllers
             else
                 return BadRequest(ApiResponse<Employee>.Fail(result.Message!, StatusCodes.Status400BadRequest, result.Errors));
         }
-        [HttpGet("all")]
+        [HttpGet("GetAll")]
         public async Task<IActionResult> GetUsers()
         {
             var result = await _userService.GetEmployees();
