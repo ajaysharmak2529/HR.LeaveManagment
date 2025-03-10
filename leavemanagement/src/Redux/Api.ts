@@ -1,5 +1,4 @@
 import { createApi, fetchBaseQuery } from "@reduxjs/toolkit/query/react"
-import { ILogedInUser } from "../Types/LogedInUser";
 import { RootState } from "../Redux/Store/Store";
 
 const baseUrl = import.meta.env.VITE_BASE_API_URL ?? "http://localhost:5000/api"
@@ -22,5 +21,6 @@ const baseQuery = fetchBaseQuery({
 export const api = createApi({
     reducerPath: "api",
     baseQuery: baseQuery,
-    endpoints: () => ({})
+    endpoints: () => ({}),
+    tagTypes:["LeaveType","LeaveRequest","LeaveAllocation"]
 })
