@@ -24,6 +24,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
                 throw new NotFoundException(nameof(LeaveAllocation), request.Id);
 
             await _unitOfWork.LeaveAllocations.DeleteAsync(leaveAllocation);
+            await _unitOfWork.SaveChangesAsync();
             return Unit.Value;
         }
     }

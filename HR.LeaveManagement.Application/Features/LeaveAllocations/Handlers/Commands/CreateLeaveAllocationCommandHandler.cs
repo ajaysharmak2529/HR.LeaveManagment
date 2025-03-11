@@ -36,6 +36,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
 
             var leaveAllocation = _mapper.Map<Domain.LeaveAllocation>(request.LeaveAllocationDto);
             leaveAllocation = await _unitOfWork.LeaveAllocations.AddAsync(leaveAllocation);
+            await _unitOfWork.SaveChangesAsync();
 
             response.Success = true;
             response.Message = "Leave Allocation Created Successfully";

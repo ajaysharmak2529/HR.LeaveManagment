@@ -35,6 +35,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
 
             _mapper.Map(request.LeaveTypeDto, leaveType);
             await _unitOfWork.LeaveTypes.UpdateAsync(leaveType);
+            await _unitOfWork.SaveChangesAsync();
 
             return Unit.Value;
         }

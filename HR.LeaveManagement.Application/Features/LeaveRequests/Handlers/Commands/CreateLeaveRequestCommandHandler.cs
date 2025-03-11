@@ -40,6 +40,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
 
             var leaveRequest = _mapper.Map<Domain.LeaveRequest>(request.LeaveRequestDto);
             leaveRequest = await _unitOfWork.LeaveRequests.AddAsync(leaveRequest);
+            await _unitOfWork.SaveChangesAsync();
 
             response.Success = true;
             response.Message = "Leave Request Created Successfully";

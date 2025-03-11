@@ -38,6 +38,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
 
                 var leaveType = _mapper.Map<Domain.LeaveType>(request.LeaveTypeDto);
                 leaveType = await _unitOfWork.LeaveTypes.AddAsync(leaveType);
+               await _unitOfWork.SaveChangesAsync();
 
                 response.Success = true;
                 response.Id = leaveType.Id;

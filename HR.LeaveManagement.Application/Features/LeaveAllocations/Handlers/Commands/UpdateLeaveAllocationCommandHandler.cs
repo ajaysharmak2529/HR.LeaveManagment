@@ -38,6 +38,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
             var leaveAllocation = await _unitOfWork.LeaveAllocations.GetAsync(request.LeaveAllocationDto.Id);
             _mapper.Map(request.LeaveAllocationDto, leaveAllocation);
             await _unitOfWork.LeaveAllocations.UpdateAsync(leaveAllocation);
+            await _unitOfWork.SaveChangesAsync();
 
             response.Success = true;
             response.Message = "Leave Allocation Updated Successfully";

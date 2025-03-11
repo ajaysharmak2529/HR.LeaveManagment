@@ -24,6 +24,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
                 throw new NotFoundException(nameof(LeaveType), request.Id);
 
             await _unitOfWork.LeaveTypes.DeleteAsync(leaveType);
+            await _unitOfWork.SaveChangesAsync();
             return Unit.Value;
         }
     }

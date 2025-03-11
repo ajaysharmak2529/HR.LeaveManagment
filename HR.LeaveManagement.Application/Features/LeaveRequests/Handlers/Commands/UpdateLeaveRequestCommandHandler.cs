@@ -41,6 +41,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
                     throw new ValidationException(validationResult);
 
                 await _unitOfWork.LeaveRequests.UpdateAsync(leaveRequest);
+                await _unitOfWork.SaveChangesAsync();
             }
             return Unit.Value;
         }
