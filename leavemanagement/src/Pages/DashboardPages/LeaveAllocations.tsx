@@ -30,16 +30,16 @@ const LeaveAllocations = () => {
                                         {/* Table Header */}
                                         <thead className="border-b border-gray-100 dark:border-white/[0.05]">
                                             <tr>
-                                                <th className="px-2 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                                                <th className="px-2 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400">
                                                     Leave Type
                                                 </th>
-                                                <th className="px-2 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                                                <th className="px-2 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400">
                                                     Default Days
                                                 </th>
-                                                <th className="px-2 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                                                <th className="px-2 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400">
                                                     Number Of Days
                                                 </th>
-                                                <th className="px-2 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                                                <th className="px-2 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400">
                                                     Period
                                                 </th>
                                             </tr>
@@ -55,7 +55,7 @@ const LeaveAllocations = () => {
                                                     :
                                                     data?.data?.map((leaveAllocation) => (
                                                         <tr key={leaveAllocation.id}>
-                                                            <td className="px-2 py-4 sm:px-6 text-start">
+                                                            <td className="px-2 py-4 sm:px-6 text-center">
                                                                 <div className="flex items-center gap-3">
                                                                     <div>
                                                                         <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
@@ -64,13 +64,13 @@ const LeaveAllocations = () => {
                                                                     </div>
                                                                 </div>
                                                             </td>
-                                                            <td className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                            <td className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
                                                                 {leaveAllocation.leaveType.defaultDays}
                                                             </td>
-                                                            <td className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                            <td className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
                                                                 {leaveAllocation.numberOfDays}
                                                             </td>
-                                                            <td className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                            <td className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
                                                                 {leaveAllocation.period ? "Approved" : "Pending"}
                                                             </td>
                                                         </tr>

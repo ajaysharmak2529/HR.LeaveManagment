@@ -15,7 +15,6 @@ const Employees = () => {
     const dispatch = useDispatch();
 
     return (
-
         isLoading ? <Loader /> : isError ? <p className="text-red-500 bold">Unable to fetch data {(error as any).error}</p> :
             < div >
                 <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-2 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
@@ -32,15 +31,15 @@ const Employees = () => {
                                         {/* Table Header */}
                                         <thead className="border-b border-gray-100 dark:border-white/[0.05]">
                                             <tr>
-                                                <th className="px-2 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                                                <th className="px-2 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400">
                                                     First Name
                                                 </th>
-                                                <th className="px-2 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                                                <th className="px-2 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400">
                                                     Last Name
                                                 </th>
-                                                <tr className="px-2 py-3 font-medium text-gray-500 text-start text-theme-xs dark:text-gray-400">
+                                                <th className="px-2 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400">
                                                     Email
-                                                </tr>
+                                                </th>
                                             </tr>
                                         </thead>
 
@@ -54,23 +53,16 @@ const Employees = () => {
                                                     :
                                                     data?.data?.map((employee) => (
                                                         <tr key={employee.id}>
-                                                            <td className="px-2 py-4 sm:px-6 text-start">
-                                                                <div className="flex items-center gap-3">
-
-                                                                    <div>
-                                                                        <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
+                                                            <td className="px-2 py-4 sm:px-6 text-center">
+                                                                        <span className="block font-medium text-gray-800 text-center text-theme-sm dark:text-white/90">
                                                                             {employee.firstName}
-                                                                        </span>
-                                                                    </div>
-                                                                </div>
+                                                                        </span>                                                                
                                                             </td>
-                                                            <td className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
+                                                            <td className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
                                                                 {employee.lastName}
                                                             </td>
-                                                            <td className="px-4 py-3 text-gray-500 text-start text-theme-sm dark:text-gray-400">
-                                                                <div className="flex -space-x-2">
-                                                                    {employee.email}
-                                                                </div>
+                                                            <td className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
+                                                                    {employee.email}                                                               
                                                             </td>
                                                         </tr>
                                                     ))}

@@ -10,9 +10,3 @@ export type CreateLeaveTypeRequest = {
     defaultDays: number
 
 }
-
-export type UpdateLeaveTypeRequest = {
-    id: number
-    name: string,
-    defaultDays: number
-}
