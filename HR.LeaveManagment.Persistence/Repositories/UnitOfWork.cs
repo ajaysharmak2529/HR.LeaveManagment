@@ -8,6 +8,7 @@ namespace HR.LeaveManagement.Persistence.Repositories
         private LeaveManagementDbContext _dbContext { get; set; }
         public UnitOfWork(LeaveManagementDbContext leaveManagementDbContext)
         {
+            _dbContext = leaveManagementDbContext;
             LeaveAllocations = new LeaveAllocationRepository(leaveManagementDbContext);
             LeaveTypes = new LeaveTypeRepository(leaveManagementDbContext);
             LeaveRequests = new LeaveRequestRepository(leaveManagementDbContext);
@@ -21,7 +22,7 @@ namespace HR.LeaveManagement.Persistence.Repositories
         {
             try
             {
-               await _dbContext.SaveChangesAsync();
+                await _dbContext.SaveChangesAsync();
             }
             catch (System.Exception ex)
             {

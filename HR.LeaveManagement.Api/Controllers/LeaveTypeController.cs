@@ -73,8 +73,16 @@ namespace HR.LeaveManagement.Api.Controllers
         {
             try
             {
-                await _mediator.Send(new UpdateLeaveTypeCommand() { LeaveTypeDto = leaveTypeDto });
-                return Ok(ApiResponse<string>.Success(null!, StatusCodes.Status200OK,"Updated successfully."));
+                var result = await _mediator.Send(new UpdateLeaveTypeCommand() { LeaveTypeDto = leaveTypeDto });
+
+                if (result.Success)
+                {
+                    return Ok(ApiResponse<BaseCommandResponse>.Success(result, StatusCodes.Status200OK, "Updated successfully."));
+                }
+                else
+                {
+                    return BadRequest(ApiResponse<BaseCommandResponse>.Fail(result.Message, StatusCodes.Status400BadRequest, result.Errors));
+                }
             }
             catch (Exception ex)
             {

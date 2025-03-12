@@ -3,6 +3,7 @@ using HR.LeaveManagement.Application.Contracts.Persistence;
 using HR.LeaveManagement.Application.DTOs.LeaveType.Validators;
 using HR.LeaveManagement.Application.Features.LeaveTypes.Requests.Commands;
 using HR.LeaveManagement.Application.Responses;
+using HR.LeaveManagement.Domain;
 using MediatR;
 using System.Linq;
 using System.Threading;
@@ -38,16 +39,18 @@ namespace HR.LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
 
                 var leaveType = _mapper.Map<Domain.LeaveType>(request.LeaveTypeDto);
                 leaveType = await _unitOfWork.LeaveTypes.AddAsync(leaveType);
-               await _unitOfWork.SaveChangesAsync();
+                await _unitOfWork.SaveChangesAsync();
 
                 response.Success = true;
                 response.Id = leaveType.Id;
+                response.Message = "Leave Type Created Successfully";
             }
             catch (System.Exception ex)
             {
+                response.Success = false;
+                response.Message = ex.Message;
+                response.Errors?.Add(ex.Message);
             }
-            response.Message = "Leave Type Created Successfully";
-
             return response;
 
         }

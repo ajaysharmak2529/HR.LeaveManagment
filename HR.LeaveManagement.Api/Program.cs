@@ -34,6 +34,7 @@ app.UseCors(builder =>
 {
     builder.AllowAnyOrigin();
     builder.AllowAnyHeader();
+    builder.AllowAnyMethod();
     builder.SetIsOriginAllowed(origin => true);
 });
 
