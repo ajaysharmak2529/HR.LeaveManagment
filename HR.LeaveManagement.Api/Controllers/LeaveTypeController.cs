@@ -95,8 +95,16 @@ namespace HR.LeaveManagement.Api.Controllers
         {
             try
             {
-                await _mediator.Send(new DeleteLeaveTypeRequestCommand() { Id = id });
-                return Ok(ApiResponse<string>.Success(null!, StatusCodes.Status200OK, "Deleted successfully."));
+                var result = await _mediator.Send(new DeleteLeaveTypeRequestCommand() { Id = id });
+                if (result.Success)
+                {
+                    return Ok(ApiResponse<string>.Success(null!, StatusCodes.Status200OK, "Deleted successfully."));
+                }
+                else
+                {
+                    return BadRequest(ApiResponse<BaseCommandResponse>.Fail(result.Message, StatusCodes.Status400BadRequest, result.Errors));
+                }
+                
             }
             catch (Exception ex)
             {

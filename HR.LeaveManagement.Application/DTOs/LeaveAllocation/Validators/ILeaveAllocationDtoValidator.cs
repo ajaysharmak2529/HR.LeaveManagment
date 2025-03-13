@@ -11,11 +11,6 @@ namespace HR.LeaveManagement.Application.DTOs.LeaveAllocation.Validators
         public ILeaveAllocationDtoValidator(ILeaveTypeRepository leaveTypeRepository)
         {
             _leaveTypeRepository = leaveTypeRepository;
-            RuleFor(p => p.NumberOfDays)
-                .GreaterThan(0).WithMessage("{PropertyName} must greater than {ComparisonValue}");
-
-            RuleFor(p => p.Period)
-                .GreaterThanOrEqualTo(DateTime.Now.Year).WithMessage("{PropertyName} must be after {ComparisonValue}");
 
             RuleFor(p => p.LeaveTypeId)
                 .GreaterThan(0)

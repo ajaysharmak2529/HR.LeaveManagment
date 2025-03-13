@@ -38,7 +38,7 @@ namespace HR.LeaveManagement.Api.Controllers
         {
             try
             {
-                var LeaveAllocations = await _mediator.Send(new GetLeaveAllocationDetailRequest() { Id = id});
+                var LeaveAllocations = await _mediator.Send(new GetLeaveAllocationDetailRequest() { Id = id });
                 return Ok(ApiResponse<LeaveAllocationDto>.Success(LeaveAllocations, StatusCodes.Status200OK));
             }
             catch (Exception ex)
@@ -55,7 +55,7 @@ namespace HR.LeaveManagement.Api.Controllers
                 var LeaveAllocations = await _mediator.Send(new CreateLeaveAllocationCommand() { LeaveAllocationDto = LeaveAllocationDto });
                 if (LeaveAllocations.Success)
                 {
-                    return Ok(ApiResponse<string>.Success(LeaveAllocations.Message, StatusCodes.Status201Created));
+                    return Ok(ApiResponse<string>.Success(null!, StatusCodes.Status201Created, LeaveAllocations.Message));
                 }
                 else
                 {
@@ -77,7 +77,7 @@ namespace HR.LeaveManagement.Api.Controllers
                 var result = await _mediator.Send(new UpdateLeaveAllocationCommand() { LeaveAllocationDto = LeaveAllocationDto });
                 if (result.Success)
                 {
-                    return Ok(ApiResponse<string>.Success(result.Message, StatusCodes.Status200OK));
+                    return Ok(ApiResponse<string>.Success(null!, StatusCodes.Status200OK, result.Message));
                 }
                 else
                 {
@@ -95,8 +95,15 @@ namespace HR.LeaveManagement.Api.Controllers
         {
             try
             {
-                await _mediator.Send(new DeleteLeaveAllocationRequestCommand() { Id = id });
-                return Ok(ApiResponse<string>.Success(null!, StatusCodes.Status200OK, "Deleted successfully"));
+                var result = await _mediator.Send(new DeleteLeaveAllocationRequestCommand() { Id = id });
+                if (result.Success)
+                {
+                    return Ok(ApiResponse<string>.Success(null!, StatusCodes.Status200OK, result.Message));
+                }
+                else
+                {
+                    return BadRequest(ApiResponse<string>.Fail(result.Message, StatusCodes.Status400BadRequest, result.Errors));
+                }
             }
             catch (Exception ex)
             {

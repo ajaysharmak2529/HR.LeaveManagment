@@ -24,25 +24,34 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
         public async Task<BaseCommandResponse> Handle(UpdateLeaveAllocationCommand request, CancellationToken cancellationToken)
         {
             var response = new BaseCommandResponse();
-            var validate = new UpdateLeaveAllocationDtoValidator(_unitOfWork.LeaveTypes);
-            var validationResult = await validate.ValidateAsync(request.LeaveAllocationDto, cancellationToken);
+            try
+            {
+                var validate = new UpdateLeaveAllocationDtoValidator(_unitOfWork.LeaveTypes);
+                var validationResult = await validate.ValidateAsync(request.LeaveAllocationDto, cancellationToken);
 
-            if (!validationResult.IsValid)
+                if (!validationResult.IsValid)
+                {
+                    response.Success = false;
+                    response.Errors = validationResult.Errors.Select(x => x.ErrorMessage).ToList();
+                    response.Message = "Update Leave Allocation Failed";
+                }
+                else
+                {
+                    var leaveAllocation = await _unitOfWork.LeaveAllocations.GetAsync(request.LeaveAllocationDto.Id);
+                    _mapper.Map(request.LeaveAllocationDto, leaveAllocation);
+                    await _unitOfWork.LeaveAllocations.UpdateAsync(leaveAllocation);
+                    await _unitOfWork.SaveChangesAsync();
+
+                    response.Success = true;
+                    response.Message = "Leave Allocation Updated Successfully";
+                }
+            }
+            catch (System.Exception ex)
             {
                 response.Success = false;
-                response.Errors = validationResult.Errors.Select(x=>x.ErrorMessage).ToList();
+                response.Errors = new System.Collections.Generic.List<string> { ex.Message };
                 response.Message = "Update Leave Allocation Failed";
-                return response;
             }
-
-            var leaveAllocation = await _unitOfWork.LeaveAllocations.GetAsync(request.LeaveAllocationDto.Id);
-            _mapper.Map(request.LeaveAllocationDto, leaveAllocation);
-            await _unitOfWork.LeaveAllocations.UpdateAsync(leaveAllocation);
-            await _unitOfWork.SaveChangesAsync();
-
-            response.Success = true;
-            response.Message = "Leave Allocation Updated Successfully";
-
             return response;
         }
     }

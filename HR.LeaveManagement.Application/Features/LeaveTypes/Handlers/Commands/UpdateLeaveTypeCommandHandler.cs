@@ -36,30 +36,33 @@ namespace HR.LeaveManagement.Application.Features.LeaveTypes.Handlers.Commands
                 {
                     response.Success = false;
                     response.Errors = validationResult.Errors.Select(x => x.ErrorMessage).ToList();
-                    return response;
                 }
-
-                var leaveType = await _unitOfWork.LeaveTypes.GetAsync(request.LeaveTypeDto.Id);
-
-                if (leaveType == null)
+                else
                 {
-                    response.Success = false;
-                    response.Errors = new List<string> {"Leave not found."};
-                    response.Message = "Leave-type not found.";
-                    return response;
+                    var leaveType = await _unitOfWork.LeaveTypes.GetAsync(request.LeaveTypeDto.Id);
+
+                    if (leaveType == null)
+                    {
+                        response.Success = false;
+                        response.Errors = new List<string> { "Leave not found." };
+                        response.Message = "Leave-type not found.";
+                    }
+                    else
+                    {
+                        _mapper.Map(request.LeaveTypeDto, leaveType);
+                        await _unitOfWork.LeaveTypes.UpdateAsync(leaveType);
+                        await _unitOfWork.SaveChangesAsync();
+
+                        response.Success = true; ;
+                        response.Message = "Leave-type updated successfully";
+                    }
                 }
-
-                _mapper.Map(request.LeaveTypeDto, leaveType);
-                await _unitOfWork.LeaveTypes.UpdateAsync(leaveType);
-                await _unitOfWork.SaveChangesAsync();
-
-                response.Success = true;;
-                response.Message = "Leave-type updated successfully";
             }
             catch (System.Exception ex)
             {
                 response.Success = false;
-                response.Message = ex.Message;
+                response.Message = "Exception";
+                response.Errors = new List<string> { ex.Message };
                 return response;
             }
             return response;

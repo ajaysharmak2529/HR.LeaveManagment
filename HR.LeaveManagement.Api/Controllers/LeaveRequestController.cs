@@ -39,7 +39,7 @@ namespace HR.LeaveManagement.Api.Controllers
         {
             try
             {
-                var LeaveRequests = await _mediator.Send(new GetLeaveRequestDetailRequest() { Id = id});
+                var LeaveRequests = await _mediator.Send(new GetLeaveRequestDetailRequest() { Id = id });
                 return Ok(ApiResponse<LeaveRequestDto>.Success(LeaveRequests, StatusCodes.Status200OK));
             }
             catch (Exception ex)
@@ -74,8 +74,16 @@ namespace HR.LeaveManagement.Api.Controllers
         {
             try
             {
-                await _mediator.Send(new UpdateLeaveRequestCommand() { LeaveRequestDto = LeaveRequestDto });
-                return Ok(ApiResponse<string>.Success(null!, StatusCodes.Status200OK, "Updated successfully"));
+                var result = await _mediator.Send(new UpdateLeaveRequestCommand() { LeaveRequestDto = LeaveRequestDto });
+                if (result.Success)
+                {
+                    return Ok(ApiResponse<string>.Success(null!, StatusCodes.Status200OK, "Updated successfully"));
+                }
+                else
+                {
+                    return BadRequest(ApiResponse<BaseCommandResponse>.Fail(result.Message, StatusCodes.Status400BadRequest, result.Errors));
+                }
+
             }
             catch (Exception ex)
             {
@@ -87,8 +95,16 @@ namespace HR.LeaveManagement.Api.Controllers
         {
             try
             {
-                await _mediator.Send(new UpdateLeaveRequestCommand { LeaveRequestApprovalDto = LeaveAllocationDto });
-                return Ok(ApiResponse<string>.Success(null!, StatusCodes.Status200OK, "Approval changed successfully"));
+                var result = await _mediator.Send(new UpdateLeaveRequestCommand { LeaveRequestApprovalDto = LeaveAllocationDto });
+                if (result.Success)
+                {
+                    return Ok(ApiResponse<string>.Success(null!, StatusCodes.Status200OK, "Approval changed successfully"));
+                }
+                else
+                {
+                    return BadRequest(ApiResponse<BaseCommandResponse>.Fail(result.Message, StatusCodes.Status400BadRequest, result.Errors));
+                }
+
             }
             catch (Exception ex)
             {
@@ -100,8 +116,18 @@ namespace HR.LeaveManagement.Api.Controllers
         {
             try
             {
-                await _mediator.Send(new DeleteLeaveRequestRequestCommand() { Id = id });
-                return Ok(ApiResponse<string>.Success(null!, StatusCodes.Status200OK, "Deleted successfully"));
+                var result = await _mediator.Send(new DeleteLeaveRequestRequestCommand() { Id = id });
+
+                if (result.Success)
+                {
+                    return Ok(ApiResponse<string>.Success(null!, StatusCodes.Status200OK, "Deleted successfully"));
+                }
+                else
+                {
+                    return BadRequest(ApiResponse<BaseCommandResponse>.Fail(result.Message, StatusCodes.Status400BadRequest, result.Errors));
+                }
+
+
 
             }
             catch (Exception ex)
