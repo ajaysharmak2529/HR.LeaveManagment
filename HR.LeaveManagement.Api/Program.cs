@@ -11,6 +11,7 @@ builder.Services.ConfigureInfrastructureServices(builder.Configuration);
 builder.Services.ConfigurePersistenceServices(builder.Configuration);
 builder.Services.ConfigureIdentityServices(builder.Configuration);
 
+builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddCors();
 builder.Services.AddControllers();
