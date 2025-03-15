@@ -1,9 +1,10 @@
 ﻿using HR.LeaveManagement.Application.Contracts.Infrastructure;
 using HR.LeaveManagement.Application.Models;
 using Microsoft.Extensions.Options;
-using SendGrid;
-using SendGrid.Helpers.Mail;
 using System.Threading.Tasks;
+using MailKit.Net.Smtp;
+using MimeKit;
+using System;
 
 namespace HR.LeaveManagement.Infrastructure.Mail
 {
@@ -17,18 +18,37 @@ namespace HR.LeaveManagement.Infrastructure.Mail
         }
         public async Task<bool> SendEmailAsync(Email email)
         {
-            var client = new SendGridClient(_emailConfig.ApiKey);
-            var to = new EmailAddress(email.To);
-            var from = new EmailAddress
+
+            var message = new MimeMessage();
+            message.From.Add(new MailboxAddress(_emailConfig.FromName, _emailConfig.FromAddress));
+            message.To.Add(new MailboxAddress(string.Empty, email.To));
+            message.Subject = email.Subject;
+
+            var bodyBuilder = new BodyBuilder();
+            if (email.IsHtml)
+                bodyBuilder.HtmlBody = email.Body;
+            else
+                bodyBuilder.TextBody = email.Body;
+
+            message.Body = bodyBuilder.ToMessageBody();
+
+            try
             {
-                Email = _emailConfig.FromAddress,
-                Name = _emailConfig.FromName
-            };
-
-           var message =  MailHelper.CreateSingleEmail(from, to, email.Subject, email.Body, email.Body);
-
-          var response =   await client.SendEmailAsync(message);
-           return response.StatusCode == System.Net.HttpStatusCode.OK || response.StatusCode == System.Net.HttpStatusCode.Accepted;
+                using (var client = new SmtpClient())
+                {
+                    client.Connect(_emailConfig.SmtpServer, _emailConfig.SmtpPort, MailKit.Security.SecureSocketOptions.StartTls);
+                    client.Authenticate(_emailConfig.FromAddress, _emailConfig.Password);
+                    client.Send(message);
+                    Console.WriteLine("Email sent successfully!");
+                    client.Disconnect(true);
+                }
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"An error occurred: {ex.Message}");
+                return false;
+            }
 
         }
     }
