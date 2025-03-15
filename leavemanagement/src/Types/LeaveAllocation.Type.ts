@@ -11,7 +11,5 @@ export type LeaveAloocationType = {
 }
 
 export type CreateLeaveAllocation = {
-    numberOfDays: number,
-    leaveTypeId: number,
-    period: number
+    leaveTypeId: number
 }

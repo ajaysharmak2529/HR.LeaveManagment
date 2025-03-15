@@ -1,6 +1,6 @@
 export type LeaveRequestType = {
     id: number,
-    leaveType: {
+    leaveTypeId: {
         id: number,
         name: string,
         defaultDays: number
@@ -12,7 +12,7 @@ export type LeaveRequestType = {
 export type CreateLeaveRequest = {
     startDate: string,
     endDate: string,
-    leaveTypeId: 0,
+    leaveTypeId: number,
     dateRequested: string,
     requestComments: string
 }
