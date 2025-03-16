@@ -2,6 +2,7 @@ import { Link } from 'react-router-dom'
 import { useSelector } from "react-redux"
 import { RootState } from '../Redux/Store/Store'
 import { ThemeToggleButton } from './ThemeToggleButton';
+import UserDropdown from './UserDropdown';
 
 
 const HeaderNav = () => {
@@ -13,7 +14,6 @@ const HeaderNav = () => {
                 <ul className="hidden md:flex px-4 mx-auto font-semibold font-heading space-x-12">
                     <li><Link className="hover:text-gray-200" to="/">Home</Link></li>
                     <li><Link className="hover:text-gray-200" to="/leave-requests">Leave Requests</Link></li>
-                    <li><Link className="hover:text-gray-200" to="/leave-request">Leave Request</Link></li>
                 </ul>
                 <div className="hidden xl:flex items-center space-x-5 items-center">
                     <div>
@@ -21,12 +21,7 @@ const HeaderNav = () => {
                             accessToken !== "" ?
                                 <p className="flex gap-4">  
                                     <ThemeToggleButton />
-                                    <img
-                                        className="w-8 h-8 rounded-full object-cover"
-                                        src="https://shorturl.at/3hRff"
-                                        alt="Profile"
-                                    />
-                                    Hello {userName}
+                                    <UserDropdown/>
                                 </p> :
                                 <Link to="/signup" className="py-2.5 px-6 rounded-lg text-sm font-medium bg-teal-200 text-teal-800">Login/Register</Link>
                         }
