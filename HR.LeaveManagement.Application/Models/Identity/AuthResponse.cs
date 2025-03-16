@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace HR.LeaveManagement.Application.Models.Identity
 {
@@ -10,5 +12,6 @@ namespace HR.LeaveManagement.Application.Models.Identity
         public string AccessToken { get; set; } = string.Empty;
         public string RefreshToken { get; set; } = string.Empty;
         public DateTime ExpireAt { get; set; }
+        public IEnumerable<string>? Roles { get; set; }
     }
 }

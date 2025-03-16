@@ -9,7 +9,6 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HR.LeaveManagement.Identity.Services
 {
@@ -46,6 +45,7 @@ namespace HR.LeaveManagement.Identity.Services
 
             var accessToken = await GenerateToken(user);
             var RefreshToken = GenerateRefreshToken(user);
+            var roles = await _userManager.GetRolesAsync(user);
 
             AuthResponse data = new AuthResponse
             {
@@ -54,6 +54,7 @@ namespace HR.LeaveManagement.Identity.Services
                 UserName = user.UserName!,
                 AccessToken = accessToken,
                 RefreshToken = RefreshToken,
+                Roles = roles,
                 ExpireAt = DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes)
             };
 
@@ -92,6 +93,8 @@ namespace HR.LeaveManagement.Identity.Services
                     await _userManager.UpdateAsync(user);
 
                     await _userManager.AddToRoleAsync(user, "Employee");
+                    var roles = await _userManager.GetRolesAsync(user);
+
                     var data = new AuthResponse()
                     {
                         Id = user.Id,
@@ -99,6 +102,7 @@ namespace HR.LeaveManagement.Identity.Services
                         Email = user.Email,
                         AccessToken = accessToken,
                         RefreshToken = refreshToken,
+                        Roles = roles,
                         ExpireAt = DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes)
 
                     };
