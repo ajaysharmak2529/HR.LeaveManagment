@@ -4,6 +4,8 @@ export interface ILogedInUser {
     userName: string | null;
     accessToken: string | null;
     refreshToken: string;
+    roles: string[] | null;
+    isAdmin: boolean;
     userTheme: string | null;
 }
 
@@ -14,6 +16,8 @@ export interface ILogedInUserSlice {
     userName: string | null;
     accessToken: string | null;
     refreshToken: string | null;
+    roles: string[] | null;
+    isAdmin: boolean;
 }
 
 export interface ILogin{

@@ -8,16 +8,17 @@ import { RootState } from "../../Redux/Store/Store"
 import { useSelector, useDispatch } from "react-redux"
 import { Modal } from "../../Components/Modal";
 import { FormEvent, useState, ChangeEvent } from "react";
-import { useAddLeaveTypeMutation, useUpdateLeaveTypeMutation, useDeleteLeaveTypeMutation, useGetLeaveTypeMutation } from "../../Services/LeaveType.Service";
-import { CreateLeaveTypeRequest, LeaveType, } from "../../Types/LeaveType.Type";
+import { useAddLeaveTypeMutation, useUpdateLeaveTypeMutation, useDeleteLeaveTypeMutation } from "../../Services/LeaveType.Service";
+//import { useAddAllocationMutation } from "../../Services/LeaveAllocation.Service"
+import { LeaveType, } from "../../Types/LeaveType.Type";
 
 const LeaveTypes = () => {
 
     const { isLoading, isError, error, data } = useGetLeaveTypesQuery("");
-    const [addLeaveType, { isLoading: addIsloading, isError: addIsError, error: addError }] = useAddLeaveTypeMutation();
-    const [deleteLeaveType, { isLoading: deleteloading, isError: deleteIsError, error: deleteError }] = useDeleteLeaveTypeMutation();
-    const [updateLeaveType, { isLoading: updateloading, isError: updateIsError, error: updateError }] = useUpdateLeaveTypeMutation();
-    const [getLeaveType, { isLoading: getLeaveTypeLoading, isError: getLeaveTypeIsError, error: getLeaveTypeError }] = useGetLeaveTypeMutation();
+    const [addLeaveType, { isLoading: addIsloading, error: addError }] = useAddLeaveTypeMutation();
+    const [deleteLeaveType, { }] = useDeleteLeaveTypeMutation();
+    const [updateLeaveType, { isError: updateIsError, error: updateError }] = useUpdateLeaveTypeMutation();
+    //const [ addAllocation, {  }] = useAddAllocationMutation();
 
     const { isOpen } = useSelector((state: RootState) => state.modal);
     const [isEditMode, seteditMode] = useState(false);
@@ -33,21 +34,16 @@ const LeaveTypes = () => {
         var { data } = await deleteLeaveType(id);
         if (data?.isSuccess) {
 
-        } else {
+        } else { 
 
         }
     };
     const handelEdit = async (id: number) => {
         seteditMode(true);
         dispatch(openModal());
-        const { data } = await getLeaveType(id);
+        const leaveType = data?.data?.find(type => type.id === id);
 
-        if (data?.isSuccess) {
-            setLeaveType(data.data);
-        }
-        if (getLeaveTypeIsError) {
-            console.log(getLeaveTypeError);
-        }
+        setLeaveType(leaveType as LeaveType);
 
     }
 
@@ -63,7 +59,7 @@ const LeaveTypes = () => {
             } else {
                 console.log(addError);
             }
-            
+
 
         } else {
             const { data } = await updateLeaveType(leaveType);
@@ -91,7 +87,7 @@ const LeaveTypes = () => {
                         Leave Types
                     </h3>
                     <div className="flex justify-end mb-5">
-                        <Button variant="outline" size="sm" onClick={() => { dispatch(openModal()) }}>Create</Button>
+                        <Button variant="outline" size="sm" onClick={() => { dispatch(openModal()) }} type="button">Create</Button>
                     </div>
                     <div className="w-full overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
                         <div className="max-w-full overflow-x-auto">
@@ -183,10 +179,10 @@ const LeaveTypes = () => {
                                 </div>
                             </div>
                             <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
-                                <Button size="sm" variant="outline" onClick={handelCloseModal}>
+                                <Button size="sm" variant="outline" onClick={handelCloseModal} type="button">
                                     Close
                                 </Button>
-                                <Button size="sm" disabled={addIsloading}>
+                                <Button size="sm" disabled={addIsloading} type="button">
                                     {addIsloading ? "Processing ..." : "Save Changes"}
                                 </Button>
                             </div>

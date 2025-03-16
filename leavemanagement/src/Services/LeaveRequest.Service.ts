@@ -2,6 +2,7 @@ import { api } from "../Redux/Api";
 import { ApiResponse } from "../Types/ApiResponse";
 import { CreateLeaveRequest, LeaveRequestType, UpdateLeaveRequest } from "../Types/LeaveRequest.Type";
 
+
 const LeaveRequestService = api.injectEndpoints({
     endpoints: (builder) => ({
         getLeaveRequests: builder.query<ApiResponse<LeaveRequestType[]>, string>({
@@ -12,7 +13,7 @@ const LeaveRequestService = api.injectEndpoints({
         }),
         addLeaveRequest: builder.mutation<ApiResponse<string>, CreateLeaveRequest>({
             query: (body) => ({
-                url: '/LeaveRequest/Create',
+                url: '/LeaveRequest/Add',
                 method: 'POST',
                 body,                
             })
@@ -20,6 +21,13 @@ const LeaveRequestService = api.injectEndpoints({
         updateLeaveRequest: builder.mutation<ApiResponse<string>, UpdateLeaveRequest>({
             query: (body) => ({
                 url: '/LeaveRequest/Update',
+                method: 'PUT',
+                body
+            })
+        }),
+        chnageApprovalLeaveRequest: builder.mutation<ApiResponse<string>, UpdateLeaveRequest>({
+            query: (body) => ({
+                url: '/LeaveRequest/ChangeApproval',
                 method: 'PUT',
                 body
             })

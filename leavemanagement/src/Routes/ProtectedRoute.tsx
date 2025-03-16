@@ -9,21 +9,21 @@ import { ILogedInUserSlice } from '../Types/LogedInUser';
 import Loader from '../Components/Loader';
 
 interface ProtectedRouteProps {
-    role?: 'admin'
+    role?: 'Admin'
 }
 
 
 const ProtectedRoute = ({ role }: ProtectedRouteProps) => {
-    const LogedInUser = useSelector((state: RootState) => state.LogedInUser);
+    const { accessToken, refreshToken, isAdmin } = useSelector((state: RootState) => state.LogedInUser);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [refresh, { isLoading, isError, error }] = useRefreshTokenMutation();
 
 
     useEffect(() => {
-        if (LogedInUser?.accessToken === "" || LogedInUser?.accessToken === undefined || LogedInUser?.accessToken === null) {
-        if (LogedInUser.refreshToken !== "") {
-            refresh(LogedInUser.refreshToken).then(x => {
+        if (accessToken === "" || accessToken === undefined || accessToken === null) {
+        if (refreshToken !== "") {
+            refresh(refreshToken).then(x => {
                 const response = x.data as ApiResponse<ILogedInUserSlice>
 
                 if (response.isSuccess) {
@@ -38,7 +38,12 @@ const ProtectedRoute = ({ role }: ProtectedRouteProps) => {
     }
     }, [dispatch])
 
-    
+    if (role === "Admin")
+    {
+        if (!isAdmin) {
+            return <Navigate to="/" replace={true} />
+        }
+    }
 
     if (isLoading) return <Loader />
     if (isError) {

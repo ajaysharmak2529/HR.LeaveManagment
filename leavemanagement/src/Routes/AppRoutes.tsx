@@ -26,13 +26,12 @@ const AppRoutes = () => {
                 <Route element={<ProtectedRoute />} >
                     <Route element={<UserLayout />}>
                         <Route path="/" element={<Index />} />
-                        <Route path="/leave-request" element={<LeaveRequest />} />
                         <Route path="/leave-requests" element={<LeaveRequests />} />                        
                     </Route>
                 </Route>
 
                 {/* Admin Section */}
-                <Route element={<ProtectedRoute role="admin" />}>
+                <Route element={<ProtectedRoute role="Admin" />}>
                     <Route element={<AdminLayout />}>
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/dashboard/leave-types" element={<LeaveTypes />} />

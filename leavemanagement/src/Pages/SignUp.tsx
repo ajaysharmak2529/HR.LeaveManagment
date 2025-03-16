@@ -26,7 +26,8 @@ const SignUp = () => {
                 const response = x.data as ApiResponse<ILogedInUserSlice>
 
                 if (response.isSuccess) {
-                    dispatch(setLogedInUser(response.data));
+                    const isAdmin = response.data?.roles?.includes("Admin") ?? false;
+                    dispatch(setLogedInUser({ ...response.data, isAdmin }));
                     navigate("/");
                 }
             });
@@ -35,6 +36,8 @@ const SignUp = () => {
                 const response = x.data as ApiResponse<ILogedInUserSlice>
 
                 if (response.isSuccess) {
+                    const isAdmin = response.data?.roles?.includes("Admin") ?? false;
+                    dispatch(setLogedInUser({ ...response.data, isAdmin }));
                     dispatch(setLogedInUser(response.data));
                     navigate("/");
                 }
@@ -72,7 +75,7 @@ const SignUp = () => {
                 {
                     (isLoginError || isSignUpError) && (
                         <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300">
-                            {isLoginError ? (loginError as any).error : isSignUpError ? (signUpError as any).error :""}
+                            {isLoginError ? (loginError as any).error : isSignUpError ? (signUpError as any).error : ""}
                         </span>)}
                 {/* Sign In Form */}
                 {tab === "signin" && (
