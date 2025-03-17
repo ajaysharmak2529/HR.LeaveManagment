@@ -4,6 +4,7 @@ import { RootState } from "../Redux/Store/Store";
 import { toggleSidebar, toggleMobileSidebar } from "../Redux/Slices/Sidebar.Slice";
 import { Link } from "react-router-dom";
 import { ThemeToggleButton } from "./ThemeToggleButton";
+import UserDropdown from "./UserDropdown";
 
 const DashboardHeader = () => {
     const { isMobileOpen } = useSelector((state: RootState) => state.Sidebar);
@@ -139,6 +140,7 @@ const DashboardHeader = () => {
                 >
                     <div className="flex items-center gap-2 2xsm:gap-3">
                         <ThemeToggleButton />
+                        <UserDropdown />
                     </div>
                 </div>
             </div>

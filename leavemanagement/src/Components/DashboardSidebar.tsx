@@ -3,7 +3,10 @@ import { useCallback, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "../Redux/Store/Store";
 import { setIsHovered, setIsMobile, setIsMobileOpen } from "../Redux/Slices/Sidebar.Slice";
-
+import { BsPersonCircle } from "react-icons/bs";
+import { BsJournalCheck } from "react-icons/bs";
+import { BsJournalText } from "react-icons/bs";
+import { LuFileType } from "react-icons/lu";
 
 const Sidebar = () => {
     const location = useLocation();
@@ -103,7 +106,7 @@ const Sidebar = () => {
                                                 : "menu-item-icon-inactive"
                                                 }`}
                                         >
-                                        Icon
+                                            <LuFileType />
                                         </span>
                                         {(isExpanded || isHovered || isMobileOpen) && (
                                             <span className="menu-item-text">Leave Types</span>
@@ -122,7 +125,7 @@ const Sidebar = () => {
                                                 : "menu-item-icon-inactive"
                                                 }`}
                                         >
-                                        Icon
+                                            <BsJournalText />
                                         </span>
                                         {(isExpanded || isHovered || isMobileOpen) && (
                                             <span className="menu-item-text">Leave Requests</span>
@@ -141,7 +144,7 @@ const Sidebar = () => {
                                                 : "menu-item-icon-inactive"
                                                 }`}
                                         >
-                                        Icon
+                                            <BsJournalCheck />
                                         </span>
                                         {(isExpanded || isHovered || isMobileOpen) && (
                                             <span className="menu-item-text">Leave Allocations</span>
@@ -160,7 +163,7 @@ const Sidebar = () => {
                                                 : "menu-item-icon-inactive"
                                                 }`}
                                         >
-                                        Icon
+                                            <BsPersonCircle />
                                         </span>
                                         {(isExpanded || isHovered || isMobileOpen) && (
                                             <span className="menu-item-text">Leave Employees</span>
