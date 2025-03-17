@@ -1,5 +1,5 @@
 import Loader from "../../Components/Loader";
-import { useGetLeaveRequestsQuery } from "../../Services/LeaveRequest.Service";
+import { useGetLeaveRequestsQuery, useChnageApprovalLeaveRequestMutation, useUpdateLeaveRequestMutation } from "../../Services/LeaveRequest.Service";
 import { RootState } from "../../Redux/Store/Store"
 import { useSelector } from "react-redux"
 import Button from "../../Components/Button";
@@ -7,6 +7,9 @@ import Badge from "../../Components/Badge";
 const LeaveRequests = () => {
 
     const { isLoading, isError, error, data } = useGetLeaveRequestsQuery("");
+    const [changeApprovel, { error: changeError }] = useChnageApprovalLeaveRequestMutation();
+    const [updateLeaveRequest, { error: UpdateError }] = useUpdateLeaveRequestMutation();
+
     const { isAdmin } = useSelector((state: RootState) => state.LogedInUser);
 
     return (
@@ -73,12 +76,14 @@ const LeaveRequests = () => {
                                                         </td>
                                                         {isAdmin && <td className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
                                                             <div className="flex justify-center gap-4">
-                                                                <Button type="button" onClick={() => { }} variant="primary">
-                                                                    Approve
-                                                                </Button>
-                                                                <Button type="button" onClick={() => { }} variant="outline">
-                                                                    Cancel
-                                                                </Button>
+                                                                {!request.approved && <>
+                                                                    <Button type="button" size="sm" onClick={() => { changeApprovel({ id: request.id, approved: true }) }} variant="primary">
+                                                                        Approve
+                                                                    </Button>
+                                                                    <Button type="button" size="sm" onClick={() => { }} variant="outline">
+                                                                        Cancel
+                                                                    </Button></>
+                                                                }
                                                             </div>
                                                         </td>}
                                                     </tr>

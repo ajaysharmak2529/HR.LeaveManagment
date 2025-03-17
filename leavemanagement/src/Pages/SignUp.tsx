@@ -26,8 +26,7 @@ const SignUp = () => {
                 const response = x.data as ApiResponse<ILogedInUserSlice>
 
                 if (response.isSuccess) {
-                    const isAdmin = response.data?.roles?.includes("Admin") ?? false;
-                    dispatch(setLogedInUser({ ...response.data, isAdmin }));
+                    dispatch(setLogedInUser(response.data));
                     navigate("/");
                 }
             });
@@ -36,8 +35,6 @@ const SignUp = () => {
                 const response = x.data as ApiResponse<ILogedInUserSlice>
 
                 if (response.isSuccess) {
-                    const isAdmin = response.data?.roles?.includes("Admin") ?? false;
-                    dispatch(setLogedInUser({ ...response.data, isAdmin }));
                     dispatch(setLogedInUser(response.data));
                     navigate("/");
                 }

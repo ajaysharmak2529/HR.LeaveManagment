@@ -9,43 +9,51 @@ import { ILogedInUserSlice } from '../Types/LogedInUser';
 import Loader from '../Components/Loader';
 
 interface ProtectedRouteProps {
-    role?: 'Admin'
+    role?: 'Admin' | string
 }
 
 
 const ProtectedRoute = ({ role }: ProtectedRouteProps) => {
-    const { accessToken, refreshToken, isAdmin } = useSelector((state: RootState) => state.LogedInUser);
+    const logedInUser = useSelector((state: RootState) => state.LogedInUser);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [refresh, { isLoading, isError, error }] = useRefreshTokenMutation();
 
 
     useEffect(() => {
+        const { accessToken, refreshToken } = logedInUser;
         if (accessToken === "" || accessToken === undefined || accessToken === null) {
-        if (refreshToken !== "") {
-            refresh(refreshToken).then(x => {
-                const response = x.data as ApiResponse<ILogedInUserSlice>
+            if (refreshToken !== "") {
+                refresh(refreshToken).then(({ data, error }) => {
 
-                if (response.isSuccess) {
-                    dispatch(setLogedInUser(response.data));
-                } else {
-                    navigate("/SignUp", { replace:true });
-                }
-            })
-        } else {
-            navigate("/SignUp", { replace: true });
+                    if (data) {
+                        const response = data as ApiResponse<ILogedInUserSlice>
+
+                        if (response.isSuccess) {
+                            dispatch(setLogedInUser(response.data));
+                        } else {
+                            navigate("/SignUp", { replace: true });
+                        }
+                    }
+                    if (error) {
+                        console.log(`Error ${(error as any).data}`)
+                    }
+                })
+            } else {                
+                navigate("/SignUp", { replace: true });
+            }
         }
-    }
-    }, [dispatch])
+    }, [logedInUser])
 
-    if (role === "Admin")
-    {
-        if (!isAdmin) {
-            return <Navigate to="/" replace={true} />
+    if (role !== undefined) {
+        if (!logedInUser.roles?.includes(role)) {
+            navigate("/", { replace: true });
         }
     }
 
     if (isLoading) return <Loader />
+
+    
     if (isError) {
         console.log(error)
         return <Navigate to="/SignUp" replace={true} />

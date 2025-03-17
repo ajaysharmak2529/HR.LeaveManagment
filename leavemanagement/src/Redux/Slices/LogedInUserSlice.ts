@@ -7,6 +7,8 @@ const initialState: ILogedInUser = {
     email: "",
     userName:"",
     accessToken: "",
+    roles: [],
+    isAdmin:false,
     refreshToken: secureLocalStorage.getItem("refreshToken")?.toString() ?? "",
     userTheme: localStorage.getItem("theme") ?? "light"
 };
@@ -22,6 +24,9 @@ const LogedInUserSlice = createSlice({
             state.userName = action.payload.userName;
             state.accessToken = action.payload.accessToken!;
             state.refreshToken = action.payload.refreshToken!;
+            state.roles = action.payload.roles!;
+            state.isAdmin = action.payload.roles?.includes("Admin")?? false;
+
             secureLocalStorage.setItem("refreshToken", action.payload.refreshToken!)
         },
         logout: (state) => {
@@ -30,6 +35,8 @@ const LogedInUserSlice = createSlice({
             state.userName = "";
             state.accessToken = "";
             state.refreshToken = "";
+            state.isAdmin = false;
+            state.roles = [];
             secureLocalStorage.removeItem("refreshToken")
         },
         toggelTheme: (state) => {

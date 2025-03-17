@@ -25,3 +25,8 @@ export type UpdateLeaveRequest =
         requestComments: string,
         cancelled: boolean
     }
+export type ChangeApprovelLeaveRequest =
+    {
+        id: number,
+        approved: boolean
+    }
