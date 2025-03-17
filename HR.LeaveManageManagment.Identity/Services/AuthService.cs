@@ -206,6 +206,7 @@ namespace HR.LeaveManagement.Identity.Services
                     response.Id = user.Id;
                     response.UserName = user.UserName!;
                     response.Email = user.Email!;
+                    response.Roles = await _userManager.GetRolesAsync(user);
 
                 }
                 return BaseResult<AuthResponse>.Success(response, "Token refreshed successfully");

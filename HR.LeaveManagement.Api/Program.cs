@@ -19,7 +19,8 @@ builder.Services.AddCors(o =>
     o.AddPolicy("CorsPolicy",
         builder => builder.AllowAnyOrigin()
         .AllowAnyMethod()
-        .AllowAnyHeader().SetIsOriginAllowed(origin=> true));
+        .AllowAnyHeader()
+        .SetIsOriginAllowed(origin=> true));
 });
 builder.Services.AddControllers().AddJsonOptions(options =>
 {

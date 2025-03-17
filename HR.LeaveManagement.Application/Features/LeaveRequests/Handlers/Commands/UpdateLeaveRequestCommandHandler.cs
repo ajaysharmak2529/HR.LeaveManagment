@@ -50,10 +50,10 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
                             throw new ValidationException(validationResult);
 
                         await _unitOfWork.LeaveRequests.UpdateAsync(leaveRequest);
-                        await _unitOfWork.SaveChangesAsync();
                     }
                     response.Success = true;
                     response.Message = "Updated successfully";
+                    await _unitOfWork.SaveChangesAsync();
                 }
 
             }
