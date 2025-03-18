@@ -7,14 +7,14 @@ import Input from "../../Components/InputField";
 import TextArea from "../../Components/TextArea";
 import Button from "../../Components/Button";
 import Label from "../../Components/Label";
-import { format, } from 'date-fns';
+import { format, addDays } from 'date-fns';
 import Select, { Option } from "../../Components/Select";
 
 const Index = () => {
 
     const { data } = useGetLeaveTypesQuery("");
 
-    const [leaveRequest, setLeaveRequest] = useState<CreateLeaveRequest>({ startDate: format(new Date(), "yyyy-MM-dd"), endDate: format(new Date().setDate(16), "yyyy-MM-dd"), dateRequested: format(new Date(), "dd/MM/yyyy"), leaveTypeId: 2, requestComments: "Test-1" })
+    const [leaveRequest, setLeaveRequest] = useState<CreateLeaveRequest>({ startDate: format(new Date(), "yyyy-MM-dd"), endDate: format(addDays(new Date(),1), "yyyy-MM-dd"), dateRequested: format(new Date(), "dd/MM/yyyy"), leaveTypeId: 2, requestComments: "Test-1" })
     const [addLeaveRequest] = useAddLeaveRequestMutation();
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -40,7 +40,7 @@ const Index = () => {
 
     return (
         <>
-            <div className="bg-white p-6 rounded-lg shadow-md">
+            <div className="bg-white p-6 rounded-lg shadow-md dark:border-gray-800 dark:bg-white/[0.03] dark:text-white">
                 <div className="flex items-center mb-6">
                     <TbReportAnalytics fontSize="30" color="red" />
                     <h2 className="text-2xl font-bold">Leave Report</h2>

@@ -5,8 +5,12 @@ export type LeaveRequestType = {
         name: string,
         defaultDays: number
     },
-    leaveRequested: string,
-    approved: boolean
+    dateRequested: string,
+    approved: boolean,
+    cancelled: boolean
+    startDate: string,
+    endDate: string,
+    requestComments:string
 }
 
 export type CreateLeaveRequest = {

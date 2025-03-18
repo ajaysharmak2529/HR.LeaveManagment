@@ -1,9 +1,11 @@
 import Loader from "../../Components/Loader";
-import { useGetLeaveRequestsQuery, useChnageApprovalLeaveRequestMutation, useUpdateLeaveRequestMutation } from "../../Services/LeaveRequest.Service";
+import { useGetLeaveRequestsQuery, useChnageApprovalLeaveRequestMutation, useUpdateLeaveRequestMutation, useGetLeaveRequestQuery } from "../../Services/LeaveRequest.Service";
 import { RootState } from "../../Redux/Store/Store"
 import { useSelector } from "react-redux"
 import Button from "../../Components/Button";
 import Badge from "../../Components/Badge";
+import { LeaveRequestType } from "../../Types/LeaveRequest.Type"
+
 const LeaveRequests = () => {
 
     const { isLoading, isError, error, data } = useGetLeaveRequestsQuery("");
@@ -12,6 +14,13 @@ const LeaveRequests = () => {
 
     const { isAdmin } = useSelector((state: RootState) => state.LogedInUser);
 
+    const handelCancel = async (id: number) => {
+        const request = data?.data.find(x => x.id == id);
+        const { data: updateData, error } = await updateLeaveRequest({ cancelled: true, startDate: (request as LeaveRequestType).startDate, endDate: (request as LeaveRequestType).endDate, id: id, leaveTypeId: (request as LeaveRequestType).leaveType.id, requestComments: (request as LeaveRequestType).requestComments })
+        console.log(updateData)
+    }
+
+    console.log(data?.data);
     return (
         isLoading ? <Loader /> : isError ? <p className="text-red-500 bold">Unable to fetch data {(error as any).error}</p> :
             <div>
@@ -36,6 +45,9 @@ const LeaveRequests = () => {
                                                 Is Approved
                                             </th>
                                             <th className="px-2 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400">
+                                                Is Cancelled
+                                            </th>
+                                            <th className="px-2 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400">
                                                 Leave Requested
                                             </th>
                                             {isAdmin && <th className="px-2 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400">
@@ -54,14 +66,8 @@ const LeaveRequests = () => {
                                                 :
                                                 data?.data?.map((request) => (
                                                     <tr key={request.id}>
-                                                        <td className="px-2 py-4 sm:px-6 text-center">
-                                                            <div className="flex items-center gap-3">
-                                                                <div>
-                                                                    <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">
-                                                                        {request.leaveType.name}
-                                                                    </span>
-                                                                </div>
-                                                            </div>
+                                                        <td className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
+                                                            {request.leaveType.name}
                                                         </td>
                                                         <td className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
                                                             {request.leaveType.defaultDays}
@@ -72,18 +78,23 @@ const LeaveRequests = () => {
                                                             </Badge>
                                                         </td>
                                                         <td className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
-                                                            {new Date(request.leaveRequested).toLocaleDateString()}
+                                                            <Badge variant="solid" size="md" color={request.cancelled ? "error" : "warning"}>
+                                                                {request.cancelled ? "Cancelled" : "Not-Cancelled"}
+                                                            </Badge>
+                                                        </td>
+                                                        <td className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
+                                                            {request.dateRequested}
                                                         </td>
                                                         {isAdmin && <td className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
                                                             <div className="flex justify-center gap-4">
-                                                                {!request.approved && <>
+                                                                {(!request.approved && !request.cancelled) ? <>
                                                                     <Button type="button" size="sm" onClick={() => { changeApprovel({ id: request.id, approved: true }) }} variant="primary">
                                                                         Approve
                                                                     </Button>
-                                                                    <Button type="button" size="sm" onClick={() => { }} variant="outline">
+                                                                    <Button type="button" size="sm" onClick={() => { handelCancel(request.id) }} variant="outline">
                                                                         Cancel
                                                                     </Button></>
-                                                                }
+                                                               :<p>No Actions</p> }
                                                             </div>
                                                         </td>}
                                                     </tr>

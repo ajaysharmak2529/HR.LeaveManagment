@@ -49,6 +49,12 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Command
                         if (!validationResult.IsValid)
                             throw new ValidationException(validationResult);
 
+                        leaveRequest.Cancelled = request.LeaveRequestDto.Cancelled;
+                        leaveRequest.StartDate = request.LeaveRequestDto.StartDate;
+                        leaveRequest.EndDate = request.LeaveRequestDto.EndDate;
+                        leaveRequest.RequestComments = request.LeaveRequestDto.RequestComments;
+                        leaveRequest.LeaveTypeId = request.LeaveRequestDto.LeaveTypeId;
+
                         await _unitOfWork.LeaveRequests.UpdateAsync(leaveRequest);
                     }
                     response.Success = true;
