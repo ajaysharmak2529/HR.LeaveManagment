@@ -2,6 +2,7 @@
 using HR.LeaveManagement.Domain;
 using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace HR.LeaveManagement.Persistence.Repositories
@@ -36,6 +37,38 @@ namespace HR.LeaveManagement.Persistence.Repositories
                 .FirstOrDefaultAsync(x => x.Id == id);
 
             return leaveRequest;
+        }
+        public async Task<int> GetEmployeeTotalLeaveRequest(string userId)
+        {
+           return await _dbContext.LeaveRequests.Where(x=>x.EmployeeId == userId).CountAsync();                
+        }
+        public async Task<int> GetEmployeePendingLeaveRequest(string userId)
+        {
+           return await _dbContext.LeaveRequests.Where(x=>x.EmployeeId == userId && x.Approved == false).CountAsync();                
+        }
+        public async Task<int> GetEmployeeApprovedLeaveRequest(string userId)
+        {
+           return await _dbContext.LeaveRequests.Where(x=>x.EmployeeId == userId && x.Approved == true).CountAsync();                
+        }
+        public async Task<int> GetEmployeeRejectedLeaveRequest(string userId)
+        {
+           return await _dbContext.LeaveRequests.Where(x=>x.EmployeeId == userId && x.Cancelled == true).CountAsync();                
+        }
+        public async Task<int> GetTotalLeaveRequest()
+        {
+           return await _dbContext.LeaveRequests.CountAsync();                
+        }
+        public async Task<int> GetPendingLeaveRequest()
+        {
+           return await _dbContext.LeaveRequests.Where(x=> x.Approved == false).CountAsync();                
+        }
+        public async Task<int> GetApprovedLeaveRequest()
+        {
+           return await _dbContext.LeaveRequests.Where(x=>x.Approved == true).CountAsync();                
+        }
+        public async Task<int> GetRejectedLeaveRequest()
+        {
+           return await _dbContext.LeaveRequests.Where(x=>x.Cancelled == true).CountAsync();                
         }
     }
 }

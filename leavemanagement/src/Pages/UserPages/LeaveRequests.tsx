@@ -9,18 +9,23 @@ import { LeaveRequestType } from "../../Types/LeaveRequest.Type"
 const LeaveRequests = () => {
 
     const { isLoading, isError, error, data } = useGetLeaveRequestsQuery("");
-    const [changeApprovel, { error: changeError }] = useChnageApprovalLeaveRequestMutation();
-    const [updateLeaveRequest, { error: UpdateError }] = useUpdateLeaveRequestMutation();
+    const [changeApprovel] = useChnageApprovalLeaveRequestMutation();
+    const [updateLeaveRequest] = useUpdateLeaveRequestMutation();
 
     const { isAdmin } = useSelector((state: RootState) => state.LogedInUser);
 
     const handelCancel = async (id: number) => {
-        const request = data?.data.find(x => x.id == id);
-        const { data: updateData, error } = await updateLeaveRequest({ cancelled: true, startDate: (request as LeaveRequestType).startDate, endDate: (request as LeaveRequestType).endDate, id: id, leaveTypeId: (request as LeaveRequestType).leaveType.id, requestComments: (request as LeaveRequestType).requestComments })
-        console.log(updateData)
-    }
+        const request = data?.data.find(x => x.id == id) as LeaveRequestType;
+        const { data: updateData, error } = await updateLeaveRequest({ cancelled: true, startDate: request.startDate, endDate: request.endDate, id: id, leaveTypeId: request.leaveType.id, requestComments: request.requestComments })
 
-    console.log(data?.data);
+        if (updateData !== undefined) {
+            console.log(updateData);
+        }
+        if (error !== undefined) {
+            console.error(error);
+        }
+
+    }
     return (
         isLoading ? <Loader /> : isError ? <p className="text-red-500 bold">Unable to fetch data {(error as any).error}</p> :
             <div>
@@ -94,7 +99,7 @@ const LeaveRequests = () => {
                                                                     <Button type="button" size="sm" onClick={() => { handelCancel(request.id) }} variant="outline">
                                                                         Cancel
                                                                     </Button></>
-                                                               :<p>No Actions</p> }
+                                                                    : <p>No Actions</p>}
                                                             </div>
                                                         </td>}
                                                     </tr>

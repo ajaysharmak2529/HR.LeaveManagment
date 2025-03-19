@@ -1,6 +1,7 @@
 import { FormEvent, useState } from "react";
 import { useGetLeaveTypesQuery } from "../../Services/LeaveType.Service"
 import { useAddLeaveRequestMutation } from "../../Services/LeaveRequest.Service"
+import { useEmployeeReportQuery } from "../../Services/Reports.Service"
 import { CreateLeaveRequest } from "../../Types/LeaveRequest.Type";
 import { TbReportAnalytics } from "react-icons/tb";
 import Input from "../../Components/InputField";
@@ -14,15 +15,16 @@ const Index = () => {
 
     const { data } = useGetLeaveTypesQuery("");
 
-    const [leaveRequest, setLeaveRequest] = useState<CreateLeaveRequest>({ startDate: format(new Date(), "yyyy-MM-dd"), endDate: format(addDays(new Date(),1), "yyyy-MM-dd"), dateRequested: format(new Date(), "dd/MM/yyyy"), leaveTypeId: 2, requestComments: "Test-1" })
+    const [leaveRequest, setLeaveRequest] = useState<CreateLeaveRequest>({ startDate: format(new Date(), "yyyy-MM-dd"), endDate: format(addDays(new Date(), 1), "yyyy-MM-dd"), dateRequested: format(new Date(), "dd/MM/yyyy"), leaveTypeId: 2, requestComments: "Test-1" })
     const [addLeaveRequest] = useAddLeaveRequestMutation();
+    const { data: employeeReport } = useEmployeeReportQuery("");
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         leaveRequest.startDate = format(leaveRequest.startDate, "dd/MM/yyyy");
         leaveRequest.endDate = format(leaveRequest.endDate, "dd/MM/yyyy");
 
-        const { data:response, error:reponseError } = await addLeaveRequest(leaveRequest);
+        const { data: response, error: reponseError } = await addLeaveRequest(leaveRequest);
 
         if (response?.isSuccess) {
             console.log(response?.message)
@@ -30,13 +32,13 @@ const Index = () => {
             console.log(response?.errors)
         }
         if (reponseError) {
-            console.log((reponseError as any).error);
+            console.error((reponseError as any).error);
         }
     }
     const options: Option[] = data?.data.map((type) => ({
         value: type.id,
         label: type.name,
-    }))??[];
+    })) ?? [];
 
     return (
         <>
@@ -48,19 +50,19 @@ const Index = () => {
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
                     <div className="bg-blue-50 p-4 rounded-lg">
                         <p className="text-sm text-blue-600">Total Requests</p>
-                        <p className="text-2xl font-bold">{0}</p>
+                        <p className="text-2xl font-bold">{employeeReport?.data.totalRequests ?? 0}</p>
                     </div>
                     <div className="bg-green-50 p-4 rounded-lg">
                         <p className="text-sm text-green-600">Approved</p>
-                        <p className="text-2xl font-bold">{0}</p>
+                        <p className="text-2xl font-bold">{employeeReport?.data.approved ?? 0}</p>
                     </div>
                     <div className="bg-red-50 p-4 rounded-lg">
                         <p className="text-sm text-red-600">Rejected</p>
-                        <p className="text-2xl font-bold">{0}</p>
+                        <p className="text-2xl font-bold">{employeeReport?.data.rejected ?? 0}</p>
                     </div>
                     <div className="bg-yellow-50 p-4 rounded-lg">
                         <p className="text-sm text-yellow-600">Pending</p>
-                        <p className="text-2xl font-bold">{0}</p>
+                        <p className="text-2xl font-bold">{employeeReport?.data.pending ?? 0}</p>
                     </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -80,7 +82,7 @@ const Index = () => {
                             <Input
                                 type="date"
                                 value={leaveRequest.startDate}
-                                onChange={(e) => setLeaveRequest({ ...leaveRequest, startDate: e.target.value})}
+                                onChange={(e) => setLeaveRequest({ ...leaveRequest, startDate: e.target.value })}
                             />
                         </div>
                         <div>
@@ -88,7 +90,7 @@ const Index = () => {
                             <Input
                                 type="date"
                                 value={leaveRequest.endDate}
-                                onChange={(e) => setLeaveRequest({ ...leaveRequest, endDate: e.target.value})}
+                                onChange={(e) => setLeaveRequest({ ...leaveRequest, endDate: e.target.value })}
                             />
                         </div>
                         <div>
