@@ -5,8 +5,12 @@ import { CreateLeaveRequest, LeaveRequestType, UpdateLeaveRequest, ChangeApprove
 
 const LeaveRequestService = api.injectEndpoints({
     endpoints: (builder) => ({
-        getLeaveRequests: builder.query<ApiResponse<LeaveRequestType[]>, string>({
+        getAllLeaveRequests: builder.query<ApiResponse<LeaveRequestType[]>, string>({
             query: () => '/LeaveRequest/GetAll',
+            providesTags: ["LeaveRequest"]
+        }),
+        getEmployeeLeaveRequests: builder.query<ApiResponse<LeaveRequestType[]>, string>({
+            query: () => '/LeaveRequest/Employee',
             providesTags: ["LeaveRequest"]
         }),
         getLeaveRequest: builder.query<ApiResponse<LeaveRequestType>, number>({
@@ -46,4 +50,4 @@ const LeaveRequestService = api.injectEndpoints({
     })
 });
 
-export const { useAddLeaveRequestMutation, useDeleteLeaveRequestMutation, useGetLeaveRequestQuery, useGetLeaveRequestsQuery, useUpdateLeaveRequestMutation, useChnageApprovalLeaveRequestMutation } = LeaveRequestService;
+export const { useAddLeaveRequestMutation, useDeleteLeaveRequestMutation, useGetLeaveRequestQuery, useGetAllLeaveRequestsQuery, useGetEmployeeLeaveRequestsQuery, useUpdateLeaveRequestMutation, useChnageApprovalLeaveRequestMutation } = LeaveRequestService;

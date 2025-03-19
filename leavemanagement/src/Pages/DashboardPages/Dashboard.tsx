@@ -12,7 +12,6 @@ const Dashboard = () => {
                     <TbReportAnalytics fontSize="30" color="red" />
                     <h2 className="text-2xl font-bold">Leave Report</h2>
                 </div>
-
                 <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8 text-gray-800">
                     <div className="bg-blue-50 p-4 rounded-lg">
                         <p className="text-sm text-blue-600">Total Requests</p>

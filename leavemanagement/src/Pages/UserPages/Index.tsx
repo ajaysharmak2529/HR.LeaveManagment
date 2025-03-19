@@ -18,19 +18,23 @@ const Index = () => {
     const [leaveRequest, setLeaveRequest] = useState<CreateLeaveRequest>({ startDate: format(new Date(), "yyyy-MM-dd"), endDate: format(addDays(new Date(), 1), "yyyy-MM-dd"), dateRequested: format(new Date(), "dd/MM/yyyy"), leaveTypeId: 2, requestComments: "Test-1" })
     const [addLeaveRequest] = useAddLeaveRequestMutation();
     const { data: employeeReport } = useEmployeeReportQuery("");
+
+
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
         leaveRequest.startDate = format(leaveRequest.startDate, "dd/MM/yyyy");
         leaveRequest.endDate = format(leaveRequest.endDate, "dd/MM/yyyy");
 
         const { data: response, error: reponseError } = await addLeaveRequest(leaveRequest);
 
-        if (response?.isSuccess) {
-            console.log(response?.message)
-        } else if (!response?.isSuccess) {
-            console.log(response?.errors)
+        if (response) {
+            if (response?.isSuccess) {
+                console.log(response?.message)
+            } else if (!response?.isSuccess) {
+                console.log(response?.errors)
+            }
         }
+
         if (reponseError) {
             console.error((reponseError as any).error);
         }

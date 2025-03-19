@@ -1,12 +1,11 @@
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom"
 import ProtectedRoute from "./ProtectedRoute";
-import LeaveType from "../Pages/UserPages/LeaveType";
 import SignUp from "../Pages/SignUp";
 import UserLayout from "../Pages/Shared/UserLayout";
 import AdminLayout from "../Pages/Shared/AdminLayout";
-import LeaveRequest from "../Pages/UserPages/LeaveRequest";
+import AdminLeaveRequests from "../Pages/DashboardPages/AdminLeaveRequests";
 import Index from "../Pages/UserPages/Index";
-import LeaveRequests from "../Pages/UserPages/LeaveRequests";
+import EmployeeLeaveRequests from "../Pages/UserPages/EmployeeLeaveRequests";
 import LeaveTypes from "../Pages/DashboardPages/LeaveTypes";
 import LeaveAllocations from "../Pages/DashboardPages/LeaveAllocations";
 import Employees from "../Pages/DashboardPages/Employees";
@@ -26,7 +25,7 @@ const AppRoutes = () => {
                 <Route element={<ProtectedRoute />} >
                     <Route element={<UserLayout />}>
                         <Route path="/" element={<Index />} />
-                        <Route path="/leave-requests" element={<LeaveRequests />} />                        
+                        <Route path="/leave-requests" element={<EmployeeLeaveRequests />} />                        
                     </Route>
                 </Route>
 
@@ -35,7 +34,7 @@ const AppRoutes = () => {
                     <Route element={<AdminLayout />}>
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/dashboard/leave-types" element={<LeaveTypes />} />
-                        <Route path="/dashboard/leave-requests" element={<LeaveRequests />} />
+                        <Route path="/dashboard/leave-requests" element={<AdminLeaveRequests />} />
                         <Route path="/dashboard/leave-allocations" element={<LeaveAllocations />} />
                         <Route path="/dashboard/leave-employees" element={<Employees />} />
                     </Route>

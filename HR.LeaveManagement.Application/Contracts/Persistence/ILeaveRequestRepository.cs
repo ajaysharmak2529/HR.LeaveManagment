@@ -8,6 +8,7 @@ namespace HR.LeaveManagement.Application.Contracts.Persistence
     {
         Task<LeaveRequest> GetLeaveRequestWithDetailAsync(int id);
         Task<List<LeaveRequest>> GetAllLeaveRequestsWithDetailAsync();
+        Task<List<LeaveRequest>> GetAllEmployeeLeaveRequestsWithDetailAsync(string userId);
         Task ChangeLeaveRequestApproval(LeaveRequest leaveRequest, bool? approvalStatus);
         Task<int> GetEmployeeTotalLeaveRequest(string userId);
         Task<int> GetEmployeePendingLeaveRequest(string userId);

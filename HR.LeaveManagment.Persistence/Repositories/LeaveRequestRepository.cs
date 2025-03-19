@@ -29,6 +29,12 @@ namespace HR.LeaveManagement.Persistence.Repositories
                 .Include(x=>x.LeaveType).ToListAsync();
             return leaveRequests;
         }
+        public Task<List<LeaveRequest>> GetAllEmployeeLeaveRequestsWithDetailAsync(string userId)
+        {
+            var leaveRequests = _dbContext.LeaveRequests.Where(x=>x.EmployeeId == userId)
+                .Include(x=>x.LeaveType).ToListAsync();
+            return leaveRequests;
+        }
 
         public async Task<LeaveRequest> GetLeaveRequestWithDetailAsync(int id)
         {

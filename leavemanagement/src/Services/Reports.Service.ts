@@ -6,10 +6,12 @@ import { Report } from "../Types/Report.Type";
 const ReportService = api.injectEndpoints({
     endpoints: (builder) => ({
         employeeReport: builder.query<ApiResponse<Report>, string>({
-            query: () =>"/Reports/EmployeeReport"
+            query: () => "/Reports/EmployeeReport",
+            providesTags: ["LeaveRequest"]
         }),
         adminReport: builder.query<ApiResponse<Report>,string>({
-            query: () =>"/Reports/AdminReport"
+            query: () => "/Reports/AdminReport",
+            providesTags: ["LeaveRequest"]
         })
     })
 })

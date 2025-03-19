@@ -1,14 +1,14 @@
 import Loader from "../../Components/Loader";
-import { useGetLeaveRequestsQuery, useChnageApprovalLeaveRequestMutation, useUpdateLeaveRequestMutation, useGetLeaveRequestQuery } from "../../Services/LeaveRequest.Service";
+import { useGetEmployeeLeaveRequestsQuery, useChnageApprovalLeaveRequestMutation, useUpdateLeaveRequestMutation, useGetLeaveRequestQuery } from "../../Services/LeaveRequest.Service";
 import { RootState } from "../../Redux/Store/Store"
 import { useSelector } from "react-redux"
 import Button from "../../Components/Button";
 import Badge from "../../Components/Badge";
 import { LeaveRequestType } from "../../Types/LeaveRequest.Type"
 
-const LeaveRequests = () => {
+const AdminLeaveRequests = () => {
 
-    const { isLoading, isError, error, data } = useGetLeaveRequestsQuery("");
+    const { isLoading, isError, error, data } = useGetEmployeeLeaveRequestsQuery("");
     const [changeApprovel] = useChnageApprovalLeaveRequestMutation();
     const [updateLeaveRequest] = useUpdateLeaveRequestMutation();
 
@@ -114,4 +114,4 @@ const LeaveRequests = () => {
     );
 }
 
-export default LeaveRequests;
+export default AdminLeaveRequests;

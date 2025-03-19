@@ -6,6 +6,7 @@ using HR.LeaveManagement.Application.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 
 namespace HR.LeaveManagement.Api.Controllers
 {
@@ -134,6 +135,20 @@ namespace HR.LeaveManagement.Api.Controllers
             catch (Exception ex)
             {
                 return BadRequest(ApiResponse<string>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+            }
+        }
+
+        [HttpGet("Employee")]
+        public async Task<IActionResult> GetEmployeeLeaveRequest()
+        {
+            try
+            {
+                var list = await _mediator.Send(new GetEmployeeLeaveRequestListRequest());
+                return Ok(ApiResponse<List<LeaveRequestListDto>>.Success(list, StatusCodes.Status200OK));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ApiResponse<string>.Fail(ex.Message, StatusCodes.Status400BadRequest,new string[] {ex.Message}));
             }
         }
     }
