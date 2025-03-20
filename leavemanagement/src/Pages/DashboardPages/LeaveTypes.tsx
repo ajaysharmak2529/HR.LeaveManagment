@@ -9,8 +9,10 @@ import { useSelector, useDispatch } from "react-redux"
 import { Modal } from "../../Components/Modal";
 import { FormEvent, useState, ChangeEvent } from "react";
 import { useAddLeaveTypeMutation, useUpdateLeaveTypeMutation, useDeleteLeaveTypeMutation } from "../../Services/LeaveType.Service";
-//import { useAddAllocationMutation } from "../../Services/LeaveAllocation.Service"
+import { useAddAllocationMutation } from "../../Services/LeaveAllocation.Service"
 import { LeaveType, } from "../../Types/LeaveType.Type";
+import { FaPencil } from "react-icons/fa6";
+import { FaTrashAlt } from "react-icons/fa";
 
 const LeaveTypes = () => {
 
@@ -18,7 +20,7 @@ const LeaveTypes = () => {
     const [addLeaveType, { isLoading: addIsloading, error: addError }] = useAddLeaveTypeMutation();
     const [deleteLeaveType, { }] = useDeleteLeaveTypeMutation();
     const [updateLeaveType, { isError: updateIsError, error: updateError }] = useUpdateLeaveTypeMutation();
-    //const [ addAllocation, {  }] = useAddAllocationMutation();
+    const [addAllocation] = useAddAllocationMutation();
 
     const { isOpen } = useSelector((state: RootState) => state.modal);
     const [isEditMode, seteditMode] = useState(false);
@@ -29,22 +31,39 @@ const LeaveTypes = () => {
     const handelCloseModal = () => {
         dispatch(closeModal());
         seteditMode(false);
+        setLeaveType({ id: 0, defaultDays: 0, name: "" });
     }
     const handelDelete = async (id: number) => {
-        var { data } = await deleteLeaveType(id);
-        if (data?.isSuccess) {
+        var { data:deleteData, error:deleteError } = await deleteLeaveType(id);
+        if (deleteData) {
+            if (deleteData.isSuccess) {
 
-        } else { 
-
+            } else {
+                console.error(data)
+            }
+        }
+        if (deleteError) {
+            console.error(deleteError)
         }
     };
     const handelEdit = async (id: number) => {
         seteditMode(true);
         dispatch(openModal());
         const leaveType = data?.data?.find(type => type.id === id);
-
         setLeaveType(leaveType as LeaveType);
+    }
+    const handelAddAllocation = async (id: number) => {
+        const { data: addAllocationData, error: addAlocationError } = await addAllocation({ leaveTypeId: id });
 
+        if (addAllocationData) {
+            if (addAllocationData.isSuccess) {
+            } else {
+                console.error(addAllocationData);
+            }
+        }
+        if (addAlocationError) {
+            console.error(addAlocationError);
+        }
     }
 
     const handelFormSubmition = async (e: FormEvent<HTMLFormElement>) => {
@@ -130,15 +149,14 @@ const LeaveTypes = () => {
                                                         <td className="py-3 px-4 text-center">
                                                             <div className="flex item-center justify-center">
                                                                 <button className="w-4 mr-2 transform text-blue-500 hover:scale-140" onClick={async () => { await handelEdit(leaveType.id) }}>
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
-                                                                    </svg>
+                                                                    <FaPencil />
                                                                 </button>
                                                                 <button className="w-4 mr-2 transform text-red-500 hover:scale-140" onClick={async () => { await handelDelete(leaveType.id) }}>
-                                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                                                                    </svg>
+                                                                    <FaTrashAlt />
                                                                 </button>
+                                                                <Button type="button" variant="outline" size="sm" onClick={async () => { await handelAddAllocation(leaveType.id) }}>
+                                                                    Allocate
+                                                                </Button>
                                                             </div>
                                                         </td>
                                                     </tr>

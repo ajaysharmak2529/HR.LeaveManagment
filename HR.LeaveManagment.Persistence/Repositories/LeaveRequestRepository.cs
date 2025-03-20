@@ -50,7 +50,7 @@ namespace HR.LeaveManagement.Persistence.Repositories
         }
         public async Task<int> GetEmployeePendingLeaveRequest(string userId)
         {
-           return await _dbContext.LeaveRequests.Where(x=>x.EmployeeId == userId && x.Approved == false).CountAsync();                
+           return await _dbContext.LeaveRequests.Where(x=>x.EmployeeId == userId && x.Approved == false && x.Cancelled == false).CountAsync();                
         }
         public async Task<int> GetEmployeeApprovedLeaveRequest(string userId)
         {

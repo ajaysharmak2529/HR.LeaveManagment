@@ -48,7 +48,7 @@ namespace HR.LeaveManagement.Api.Controllers
                 return BadRequest(ApiResponse<LeaveTypeDto>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
             }
         }
-
+        [Authorize(Roles ="Admin")]
         [HttpPost("Create")]
         public async Task<ActionResult<BaseCommandResponse>> Post([FromBody] CreateLeaveTypeDto leaveTypeDto)
         {
@@ -69,7 +69,7 @@ namespace HR.LeaveManagement.Api.Controllers
                 return BadRequest(ApiResponse<BaseCommandResponse>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
             }
         }
-
+        [Authorize(Roles ="Admin")]
         [HttpPut("Update")]
         public async Task<ActionResult> Put([FromBody] LeaveTypeDto leaveTypeDto)
         {
@@ -91,7 +91,7 @@ namespace HR.LeaveManagement.Api.Controllers
                 return BadRequest(ApiResponse<string>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
             }
         }
-
+        [Authorize(Roles ="Admin")]
         [HttpDelete("{id}/Delete")]
         public async Task<ActionResult> Delete(int id)
         {

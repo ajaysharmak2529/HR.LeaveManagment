@@ -1,6 +1,7 @@
 ﻿using HR.LeaveManagement.Application.Contracts.Persistence;
 using HR.LeaveManagement.Domain;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -20,10 +21,19 @@ namespace HR.LeaveManagement.Persistence.Repositories
         {
           return await _dbContext.LeaveAllocations.Include(x=> x.LeaveType).ToListAsync();
         }
-
-        public async Task<LeaveAllocation> GetLeaveAllocationWithDetailAsync(int id)
+        public async Task<List<LeaveAllocation>> GetAllAdminLeaveAllocationsWithDetailAsync()
         {
-            return await _dbContext.LeaveAllocations.Include(x => x.LeaveType).FirstOrDefaultAsync(x=>x.Id == id)!;
+            throw new NotImplementedException();
+          //return await _dbContext.LeaveAllocations.Include(x=> x.LeaveType).GroupBy(x=>x.Period);
+        }
+        public async Task<List<LeaveAllocation>> GetAllEmployeeLeaveAllocationsWithDetailAsync(string userId)
+        {
+          return await _dbContext.LeaveAllocations.Where(x=>x.EmployeeId == userId && x.Period == DateTime.Now.Year).Include(x=> x.LeaveType).ToListAsync();
+        }
+
+        public async Task<LeaveAllocation?> GetLeaveAllocationWithDetailAsync(int id)
+        {
+            return await _dbContext.LeaveAllocations.Include(x => x.LeaveType).FirstOrDefaultAsync(x=>x.Id == id);
         }
         public async Task AddAllocationsAsync(List<LeaveAllocation> allocations)
         {

@@ -7,13 +7,16 @@ const LeaveAllocationService = api.injectEndpoints({
         getLeaveAllocarions: builder.query<ApiResponse<LeaveAloocationType[]>, string>({
             query: () => '/LeaveAllocation/GetAll'
         }),
+        getEmployeeLeaveAllocarions: builder.query<ApiResponse<LeaveAloocationType[]>, string>({
+            query: () => '/LeaveAllocation/Employee'
+        }),
         getAllocation: builder.query<ApiResponse<LeaveAloocationType>, number>({
             query: (id) => `/LeaveAllocation/${id}/Get`
         }),
         addAllocation: builder.mutation<ApiResponse<string>, CreateLeaveAllocation>({
             query: (body) => ({
                 url: '/LeaveAllocation/Create',
-                method: 'PAST',
+                method: 'POST',
                 body
             })
         }),
@@ -33,4 +36,4 @@ const LeaveAllocationService = api.injectEndpoints({
     })
 })
 
-export const { useAddAllocationMutation, useDeleteAllocationMutation, useGetAllocationQuery, useGetLeaveAllocarionsQuery, useUpdateAllocationMutation } = LeaveAllocationService;
+export const { useAddAllocationMutation, useDeleteAllocationMutation, useGetAllocationQuery, useGetLeaveAllocarionsQuery, useUpdateAllocationMutation, useGetEmployeeLeaveAllocarionsQuery } = LeaveAllocationService;

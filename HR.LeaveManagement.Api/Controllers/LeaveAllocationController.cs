@@ -33,6 +33,19 @@ namespace HR.LeaveManagement.Api.Controllers
                 return BadRequest(ApiResponse<IList<LeaveAllocationDto>>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
             }
         }
+        [HttpGet("Employee")]
+        public async Task<ActionResult> GetEmployeeAllocations()
+        {
+            try
+            {
+                var LeaveAllocations = await _mediator.Send(new GetEmployeeAllocationListRequest());
+                return Ok(ApiResponse<IList<LeaveAllocationDto>>.Success(LeaveAllocations, StatusCodes.Status200OK));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ApiResponse<IList<LeaveAllocationDto>>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+            }
+        }
 
         [HttpGet("{id}/Get")]
         public async Task<ActionResult> Get(int id)

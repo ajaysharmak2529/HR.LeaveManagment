@@ -6,7 +6,6 @@ using HR.LeaveManagement.Application.Exceptions;
 using HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Commands;
 using HR.LeaveManagement.Application.Helpers;
 using HR.LeaveManagement.Application.Responses;
-using HR.LeaveManagement.Domain;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Threading;
