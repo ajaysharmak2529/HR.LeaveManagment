@@ -2,11 +2,9 @@
 using HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Commands;
 using HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Queries;
 using HR.LeaveManagement.Application.Models;
-using HR.LeaveManagement.Application.Responses;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using System.Collections.Generic;
 
 namespace HR.LeaveManagement.Api.Controllers
 {
@@ -23,16 +21,16 @@ namespace HR.LeaveManagement.Api.Controllers
         }
 
         [HttpGet("GetAll")]
-        public async Task<ActionResult> Get()
+        public async Task<ActionResult> Get(int? page = 1, int? pageSize = 10)
         {
             try
             {
-                var LeaveRequests = await _mediator.Send(new GetLeaveRequestListRequest());
-                return Ok(ApiResponse<IList<LeaveRequestListDto>>.Success(LeaveRequests, StatusCodes.Status200OK));
+                var LeaveRequests = await _mediator.Send(new GetLeaveRequestListRequest() { Page = page, PageSize = pageSize });
+                return Ok(ApiResponse<PageList<LeaveRequestListDto>>.Success(LeaveRequests, StatusCodes.Status200OK));
             }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<IList<LeaveRequestListDto>>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+                return BadRequest(ApiResponse<string>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
             }
         }
 
@@ -46,7 +44,7 @@ namespace HR.LeaveManagement.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<LeaveRequestDto>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+                return BadRequest(ApiResponse<string>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
             }
         }
 
@@ -67,7 +65,7 @@ namespace HR.LeaveManagement.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<LeaveRequestDto>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+                return BadRequest(ApiResponse<string>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
             }
         }
 
@@ -83,7 +81,7 @@ namespace HR.LeaveManagement.Api.Controllers
                 }
                 else
                 {
-                    return BadRequest(ApiResponse<BaseCommandResponse>.Fail(result.Message, StatusCodes.Status400BadRequest, result.Errors));
+                    return BadRequest(ApiResponse<string>.Fail(result.Message, StatusCodes.Status400BadRequest, result.Errors));
                 }
 
             }
@@ -104,7 +102,7 @@ namespace HR.LeaveManagement.Api.Controllers
                 }
                 else
                 {
-                    return BadRequest(ApiResponse<BaseCommandResponse>.Fail(result.Message, StatusCodes.Status400BadRequest, result.Errors));
+                    return BadRequest(ApiResponse<string>.Fail(result.Message, StatusCodes.Status400BadRequest, result.Errors));
                 }
 
             }
@@ -126,7 +124,7 @@ namespace HR.LeaveManagement.Api.Controllers
                 }
                 else
                 {
-                    return BadRequest(ApiResponse<BaseCommandResponse>.Fail(result.Message, StatusCodes.Status400BadRequest, result.Errors));
+                    return BadRequest(ApiResponse<string>.Fail(result.Message, StatusCodes.Status400BadRequest, result.Errors));
                 }
 
 
@@ -139,11 +137,11 @@ namespace HR.LeaveManagement.Api.Controllers
         }
 
         [HttpGet("Employee")]
-        public async Task<IActionResult> GetEmployeeLeaveRequest()
+        public async Task<IActionResult> GetEmployeeLeaveRequest(int? page = 1, int? pageSize = 10)
         {
             try
             {
-                var list = await _mediator.Send(new GetEmployeeLeaveRequestListRequest());
+                var list = await _mediator.Send(new GetEmployeeLeaveRequestListRequest() { Page = page, PageSize = pageSize });
                 return Ok(ApiResponse<List<LeaveRequestListDto>>.Success(list, StatusCodes.Status200OK));
             }
             catch (Exception ex)

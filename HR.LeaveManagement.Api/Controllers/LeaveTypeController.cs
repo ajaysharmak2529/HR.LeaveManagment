@@ -22,16 +22,16 @@ namespace HR.LeaveManagement.Api.Controllers
         }
 
         [HttpGet("GetAll")]
-        public async Task<ActionResult> Get()
+        public async Task<ActionResult> Get(int? page = 1, int? pageSize = 10)
         {
             try
             {
-                var leaveTypes = await _mediator.Send(new GetLeaveTypeListRequest());
-                return Ok(ApiResponse<IList<LeaveTypeDto>>.Success(leaveTypes, StatusCodes.Status200OK));
+                var leaveTypes = await _mediator.Send(new GetLeaveTypeListRequest() { Page = page, PageSize = pageSize });
+                return Ok(ApiResponse<PageList<LeaveTypeDto>>.Success(leaveTypes, StatusCodes.Status200OK));
             }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<IList<LeaveTypeDto>>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+                return BadRequest(ApiResponse<string>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
             }
         }
 
@@ -45,7 +45,7 @@ namespace HR.LeaveManagement.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<LeaveTypeDto>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+                return BadRequest(ApiResponse<string>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
             }
         }
         [Authorize(Roles ="Admin")]
@@ -61,12 +61,12 @@ namespace HR.LeaveManagement.Api.Controllers
                 }
                 else
                 {
-                    return BadRequest(ApiResponse<BaseCommandResponse>.Fail(result.Message, StatusCodes.Status400BadRequest, result.Errors));
+                    return BadRequest(ApiResponse<string>.Fail(result.Message, StatusCodes.Status400BadRequest, result.Errors));
                 }
             }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<BaseCommandResponse>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+                return BadRequest(ApiResponse<string>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
             }
         }
         [Authorize(Roles ="Admin")]
@@ -83,7 +83,7 @@ namespace HR.LeaveManagement.Api.Controllers
                 }
                 else
                 {
-                    return BadRequest(ApiResponse<BaseCommandResponse>.Fail(result.Message, StatusCodes.Status400BadRequest, result.Errors));
+                    return BadRequest(ApiResponse<string>.Fail(result.Message, StatusCodes.Status400BadRequest, result.Errors));
                 }
             }
             catch (Exception ex)
@@ -104,7 +104,7 @@ namespace HR.LeaveManagement.Api.Controllers
                 }
                 else
                 {
-                    return BadRequest(ApiResponse<BaseCommandResponse>.Fail(result.Message, StatusCodes.Status400BadRequest, result.Errors));
+                    return BadRequest(ApiResponse<string>.Fail(result.Message, StatusCodes.Status400BadRequest, result.Errors));
                 }
                 
             }

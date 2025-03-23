@@ -2,14 +2,14 @@
 using HR.LeaveManagement.Application.Contracts.Persistence;
 using HR.LeaveManagement.Application.DTOs.LeaveRequest;
 using HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Queries;
+using HR.LeaveManagement.Application.Models;
 using MediatR;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Queries
 {
-    public class GetLeaveRequestListRequestHandler : IRequestHandler<GetLeaveRequestListRequest, List<LeaveRequestListDto>>
+    public class GetLeaveRequestListRequestHandler : IRequestHandler<GetLeaveRequestListRequest, PageList<LeaveRequestListDto>>
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
@@ -19,10 +19,10 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Queries
             _unitOfWork = unitOfWork;
             _mapper = mapper;
         }
-        public async Task<List<LeaveRequestListDto>> Handle(GetLeaveRequestListRequest request, CancellationToken cancellationToken)
+        public async Task<PageList<LeaveRequestListDto>> Handle(GetLeaveRequestListRequest request, CancellationToken cancellationToken)
         {
-            var leaveRequests = await _unitOfWork.LeaveRequests.GetAllLeaveRequestsWithDetailAsync();
-            return _mapper.Map<List<LeaveRequestListDto>>(leaveRequests);
+            var leaveRequests = await _unitOfWork.LeaveRequests.GetAllLeaveRequestsWithDetailAsync(request.Page!.Value,request.PageSize!.Value);
+            return _mapper.Map<PageList<LeaveRequestListDto>>(leaveRequests);
         }
     }
 }

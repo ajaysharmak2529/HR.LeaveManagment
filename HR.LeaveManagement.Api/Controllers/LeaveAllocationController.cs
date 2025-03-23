@@ -21,29 +21,29 @@ namespace HR.LeaveManagement.Api.Controllers
         }
 
         [HttpGet("GetAll")]
-        public async Task<ActionResult> Get()
+        public async Task<ActionResult> Get(int? page = 1, int? pageSize = 10)
         {
             try
             {
-                var LeaveAllocations = await _mediator.Send(new GetLeaveAllocationListRequest());
-                return Ok(ApiResponse<IList<LeaveAllocationDto>>.Success(LeaveAllocations, StatusCodes.Status200OK));
+                var LeaveAllocations = await _mediator.Send(new GetLeaveAllocationListRequest() { Page = page, PageSize = pageSize });
+                return Ok(ApiResponse<PageList<LeaveAllocationDto>>.Success(LeaveAllocations, StatusCodes.Status200OK));
             }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<IList<LeaveAllocationDto>>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+                return BadRequest(ApiResponse<string>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
             }
         }
         [HttpGet("Employee")]
-        public async Task<ActionResult> GetEmployeeAllocations()
+        public async Task<ActionResult> GetEmployeeAllocations(int? page = 1, int? pageSize = 10)
         {
             try
             {
-                var LeaveAllocations = await _mediator.Send(new GetEmployeeAllocationListRequest());
-                return Ok(ApiResponse<IList<LeaveAllocationDto>>.Success(LeaveAllocations, StatusCodes.Status200OK));
+                var LeaveAllocations = await _mediator.Send(new GetEmployeeAllocationListRequest() { Page = page, PageSize = pageSize });
+                return Ok(ApiResponse<PageList<LeaveAllocationDto>>.Success(LeaveAllocations, StatusCodes.Status200OK));
             }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<IList<LeaveAllocationDto>>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+                return BadRequest(ApiResponse<string>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
             }
         }
 
@@ -57,7 +57,7 @@ namespace HR.LeaveManagement.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<LeaveAllocationDto>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+                return BadRequest(ApiResponse<string>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
             }
         }
 
@@ -78,7 +78,7 @@ namespace HR.LeaveManagement.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<LeaveAllocationDto>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+                return BadRequest(ApiResponse<string>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
             }
         }
 
@@ -100,7 +100,7 @@ namespace HR.LeaveManagement.Api.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest(ApiResponse<LeaveAllocationDto>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+                return BadRequest(ApiResponse<string>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
             }
         }
 

@@ -1,10 +1,12 @@
 ﻿using HR.LeaveManagement.Application.DTOs.LeaveRequest;
+using HR.LeaveManagement.Application.Models;
 using MediatR;
-using System.Collections.Generic;
 
 namespace HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Queries
 {
-    public class GetLeaveRequestListRequest : IRequest<List<LeaveRequestListDto>>
+    public class GetLeaveRequestListRequest : IRequest<PageList<LeaveRequestListDto>>
     {
+        public int? Page { get; set; }
+        public int? PageSize { get; set; }
     }
 }

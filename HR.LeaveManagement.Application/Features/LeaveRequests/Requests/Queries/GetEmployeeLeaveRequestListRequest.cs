@@ -6,4 +6,6 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Queries
 
 public class GetEmployeeLeaveRequestListRequest: IRequest<List<LeaveRequestListDto>>
 {
+    public int? Page { get; set; }
+    public int? PageSize { get; set; }
 }

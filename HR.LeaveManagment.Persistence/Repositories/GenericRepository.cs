@@ -1,6 +1,6 @@
 ﻿using HR.LeaveManagement.Application.Contracts.Persistence;
+using HR.LeaveManagement.Application.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace HR.LeaveManagement.Persistence.Repositories
@@ -33,9 +33,9 @@ namespace HR.LeaveManagement.Persistence.Repositories
             return entity != null;
         }
 
-        public async Task<IReadOnlyList<T>> GetAllAsync()
+        public async Task<PageList<T>> GetAllAsync(int? page = 1, int? pageSize = 10)
         {
-            return await Table.ToListAsync();
+            return await PageList<T>.CreateAsync(Table,page!.Value,pageSize!.Value);
         }
 
         public async Task<T> GetAsync(int id)

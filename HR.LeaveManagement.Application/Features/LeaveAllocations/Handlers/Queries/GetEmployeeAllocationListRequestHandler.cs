@@ -4,15 +4,15 @@ using HR.LeaveManagement.Application.Contracts.Persistence;
 using HR.LeaveManagement.Application.DTOs.LeaveAllocation;
 using HR.LeaveManagement.Application.Features.LeaveAllocations.Requests.Queries;
 using HR.LeaveManagement.Application.Helpers;
+using HR.LeaveManagement.Application.Models;
 using MediatR;
 using Microsoft.AspNetCore.Http;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Queries
 {
-    public class GetEmployeeAllocationListRequestHandler : IRequestHandler<GetEmployeeAllocationListRequest, List<LeaveAllocationDto>>
+    public class GetEmployeeAllocationListRequestHandler : IRequestHandler<GetEmployeeAllocationListRequest, PageList<LeaveAllocationDto>>
     {
         private readonly IUnitOfWork unitOfWork;
         private readonly IMapper mapper;
@@ -24,12 +24,12 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Quer
             this.mapper = mapper;
             _request = httpContextAccessor.HttpContext.Request;
         }
-        public async Task<List<LeaveAllocationDto>> Handle(GetEmployeeAllocationListRequest request, CancellationToken cancellationToken)
+        public async Task<PageList<LeaveAllocationDto>> Handle(GetEmployeeAllocationListRequest request, CancellationToken cancellationToken)
         {
             var userId = await _request.GetTokenClaims(CustomClaimTypes.Uid);
-            var allocations = await unitOfWork.LeaveAllocations.GetAllEmployeeLeaveAllocationsWithDetailAsync(userId!);
+            var allocations = await unitOfWork.LeaveAllocations.GetAllEmployeeLeaveAllocationsWithDetailAsync(userId!, request.Page!.Value, request.PageSize!.Value);
 
-           return mapper.Map<List<LeaveAllocationDto>>(allocations);    
+            return mapper.Map<PageList<LeaveAllocationDto>>(allocations); 
         }
     }
 }

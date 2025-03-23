@@ -28,7 +28,7 @@ public class GetEmployeeLeaveRequestListRequestHandler : IRequestHandler<GetEmpl
     {
         string? userId = await _request.GetTokenClaims(CustomClaimTypes.Uid);
 
-        var list = await _unitOfWork.LeaveRequests.GetAllEmployeeLeaveRequestsWithDetailAsync(userId!);
+        var list = await _unitOfWork.LeaveRequests.GetAllEmployeeLeaveRequestsWithDetailAsync(userId!,request.Page!.Value,request.PageSize!.Value);
         var mappedList = _mapper.Map<List<LeaveRequestListDto>>(list);
         return mappedList;
 

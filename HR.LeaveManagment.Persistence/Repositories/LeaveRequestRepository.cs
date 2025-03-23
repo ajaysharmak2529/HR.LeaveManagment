@@ -1,7 +1,7 @@
 ﻿using HR.LeaveManagement.Application.Contracts.Persistence;
+using HR.LeaveManagement.Application.Models;
 using HR.LeaveManagement.Domain;
 using Microsoft.EntityFrameworkCore;
-using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,17 +23,15 @@ namespace HR.LeaveManagement.Persistence.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public Task<List<LeaveRequest>> GetAllLeaveRequestsWithDetailAsync()
+        public async Task<PageList<LeaveRequest>> GetAllLeaveRequestsWithDetailAsync(int page, int pageSize)
         {
-            var leaveRequests = _dbContext.LeaveRequests
-                .Include(x=>x.LeaveType).ToListAsync();
-            return leaveRequests;
+            var query = _dbContext.LeaveRequests.Include(x=>x.LeaveType);
+            return await PageList<LeaveRequest>.CreateAsync(query, page, pageSize);
         }
-        public Task<List<LeaveRequest>> GetAllEmployeeLeaveRequestsWithDetailAsync(string userId)
+        public async Task<PageList<LeaveRequest>> GetAllEmployeeLeaveRequestsWithDetailAsync(string userId, int page, int pageSize)
         {
-            var leaveRequests = _dbContext.LeaveRequests.Where(x=>x.EmployeeId == userId)
-                .Include(x=>x.LeaveType).ToListAsync();
-            return leaveRequests;
+            var query = _dbContext.LeaveRequests.Where(x=>x.EmployeeId == userId).Include(x=>x.LeaveType);
+            return await PageList<LeaveRequest>.CreateAsync(query, page, pageSize);
         }
 
         public async Task<LeaveRequest> GetLeaveRequestWithDetailAsync(int id)
@@ -42,7 +40,7 @@ namespace HR.LeaveManagement.Persistence.Repositories
                 .Include(x => x.LeaveType)
                 .FirstOrDefaultAsync(x => x.Id == id);
 
-            return leaveRequest;
+            return leaveRequest!;
         }
         public async Task<int> GetEmployeeTotalLeaveRequest(string userId)
         {
