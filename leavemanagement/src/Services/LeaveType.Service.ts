@@ -1,10 +1,10 @@
 import { api } from "../Redux/Api";
-import { ApiResponse } from "../Types/ApiResponse";
+import { ApiResponse, PageList } from "../Types/ApiResponse";
 import { LeaveType, CreateLeaveTypeRequest } from "../Types/LeaveType.Type";
 
 const LeaveTypeService = api.injectEndpoints({
     endpoints: (builder) => ({
-        getLeaveTypes: builder.query<ApiResponse<LeaveType[]>, string>({
+        getLeaveTypes: builder.query < ApiResponse<PageList<LeaveType[]>>, string>({
             query: () => '/LeaveType/GetAll',
             providesTags: ["LeaveType"]
         }),

@@ -22,7 +22,7 @@ const Employees = () => {
                             Employees
                     </h3>
                     <div className="flex justify-end mb-5">
-                        <Button variant="outline" size="sm" onClick={() => { dispatch(openModal()) }}>Create</Button>
+                        <Button type="button" variant="outline" size="sm" onClick={() => { dispatch(openModal()) }}>Create</Button>
                     </div>
                         <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
                             <div className="max-w-full overflow-x-auto">
@@ -45,13 +45,13 @@ const Employees = () => {
 
                                         {/* Table Body */}
                                         <tbody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
-                                            {
-                                                data?.data?.length == 0 ?
+                                        {
+                                            data?.data?.items.length == 0 ?
                                                     <tr className="text-red-500 w-full">
                                                         <td className="px-2 py-4 sm:px-6 w-full text-center" colSpan={10}>No Data</td>
                                                     </tr>
-                                                    :
-                                                    data?.data?.map((employee) => (
+                                                :
+                                                data?.data?.items.map((employee) => (
                                                         <tr key={employee.id}>
                                                             <td className="px-2 py-4 sm:px-6 text-center">
                                                                         <span className="block font-medium text-gray-800 text-center text-theme-sm dark:text-white/90">
@@ -117,10 +117,10 @@ const Employees = () => {
                                 </div>
                             </div>
                             <div className="flex items-center gap-3 px-2 mt-6 lg:justify-end">
-                                <Button size="sm" variant="outline" onClick={() => { dispatch(closeModal()) }}>
+                                <Button type="button" size="sm" variant="outline" onClick={() => { dispatch(closeModal()) }}>
                                     Close
                                 </Button>
-                                <Button size="sm" onClick={() => { }}>
+                                <Button type="button" size="sm" onClick={() => { }}>
                                     Save Changes
                                 </Button>
                             </div>

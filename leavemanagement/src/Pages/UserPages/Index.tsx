@@ -41,7 +41,7 @@ const Index = () => {
             console.error((reponseError as any).error);
         }
     }
-    const options: Option[] = data?.data.map((type) => ({
+    const options: Option[] = data?.data.items.map((type) => ({
         value: type.id,
         label: type.name,
     })) ?? [];
@@ -117,7 +117,7 @@ const Index = () => {
                     <div>
                         <h3 className="text-xl font-semibold mb-4">Alloted Leaves </h3>
                         <div className="space-y-4">
-                            {employeeAloocations?.data.map(allocation => {
+                            {employeeAloocations?.data.items.map(allocation => {
                                 return (
                                     <div key={allocation.id} className="bg-gray-50 p-4 rounded-lg">
                                         <h4 className="font-medium font-bold text-gray-700">{allocation.leaveType.name}</h4>

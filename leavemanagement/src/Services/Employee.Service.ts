@@ -1,5 +1,5 @@
 import { api } from "../Redux/Api";
-import { ApiResponse } from "../Types/ApiResponse";
+import { ApiResponse, PageList } from "../Types/ApiResponse";
 import { Employee } from "../Types/Employee.Type";
 
 const EmployeeService = api.injectEndpoints({
@@ -7,7 +7,7 @@ const EmployeeService = api.injectEndpoints({
         getEmployee: builder.query<ApiResponse<Employee>, string>({
             query: (id) => `/Employees/${id}/Get`
         }),
-        getEmployees: builder.query<ApiResponse<Employee[]>,string>({
+        getEmployees: builder.query<ApiResponse<PageList<Employee[]>>,string>({
             query: () => `/Employees/GetAll`
         })
     })

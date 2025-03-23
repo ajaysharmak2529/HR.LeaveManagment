@@ -1,15 +1,15 @@
 import { api } from "../Redux/Api";
-import { ApiResponse } from "../Types/ApiResponse";
+import { ApiResponse, PageList } from "../Types/ApiResponse";
 import { CreateLeaveRequest, LeaveRequestType, UpdateLeaveRequest, ChangeApprovelLeaveRequest } from "../Types/LeaveRequest.Type";
 
 
 const LeaveRequestService = api.injectEndpoints({
     endpoints: (builder) => ({
-        getAllLeaveRequests: builder.query<ApiResponse<LeaveRequestType[]>, string>({
+        getAllLeaveRequests: builder.query < ApiResponse<PageList<LeaveRequestType[]>>, string>({
             query: () => '/LeaveRequest/GetAll',
             providesTags: ["LeaveRequest"]
         }),
-        getEmployeeLeaveRequests: builder.query<ApiResponse<LeaveRequestType[]>, string>({
+        getEmployeeLeaveRequests: builder.query < ApiResponse<PageList<LeaveRequestType[]>>, string>({
             query: () => '/LeaveRequest/Employee',
             providesTags: ["LeaveRequest"]
         }),

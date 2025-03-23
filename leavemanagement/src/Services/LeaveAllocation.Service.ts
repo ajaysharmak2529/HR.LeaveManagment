@@ -1,13 +1,13 @@
 import { api } from "../Redux/Api";
-import { ApiResponse } from "../Types/ApiResponse";
+import { ApiResponse, PageList } from "../Types/ApiResponse";
 import { LeaveAloocationType, CreateLeaveAllocation } from "../Types/LeaveAllocation.Type";
 
 const LeaveAllocationService = api.injectEndpoints({
     endpoints: (builder) => ({
-        getLeaveAllocarions: builder.query<ApiResponse<LeaveAloocationType[]>, string>({
+        getLeaveAllocarions: builder.query < ApiResponse<PageList<LeaveAloocationType[]>>, string>({
             query: () => '/LeaveAllocation/GetAll'
         }),
-        getEmployeeLeaveAllocarions: builder.query<ApiResponse<LeaveAloocationType[]>, string>({
+        getEmployeeLeaveAllocarions: builder.query < ApiResponse<PageList<LeaveAloocationType[]>>, string>({
             query: () => '/LeaveAllocation/Employee'
         }),
         getAllocation: builder.query<ApiResponse<LeaveAloocationType>, number>({

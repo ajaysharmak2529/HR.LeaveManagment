@@ -15,7 +15,7 @@ const AdminLeaveRequests = () => {
     const { isAdmin } = useSelector((state: RootState) => state.LogedInUser);
 
     const handelCancel = async (id: number) => {
-        const request = data?.data.find(x => x.id == id) as LeaveRequestType;
+        const request = data?.data.items.find(x => x.id == id) as LeaveRequestType;
         const { data: updateData, error } = await updateLeaveRequest({ cancelled: true, startDate: request.startDate, endDate: request.endDate, id: id, leaveTypeId: request.leaveType.id, requestComments: request.requestComments })
 
         if (updateData !== undefined) {
@@ -64,12 +64,12 @@ const AdminLeaveRequests = () => {
                                     {/* Table Body */}
                                     <tbody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
                                         {
-                                            data?.data?.length == 0 ?
+                                            data?.data?.items.length == 0 ?
                                                 <tr className="text-red-500 w-full">
                                                     <td className="px-2 py-4 sm:px-6 w-full text-center" colSpan={10}>No Data</td>
                                                 </tr>
                                                 :
-                                                data?.data?.map((request) => (
+                                                data?.data?.items.map((request) => (
                                                     <tr key={request.id}>
                                                         <td className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
                                                             {request.leaveType.name}
