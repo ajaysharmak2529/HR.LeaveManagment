@@ -6,6 +6,7 @@ using MediatR;
 using System.Threading;
 using System.Threading.Tasks;
 using HR.LeaveManagement.Application.Models;
+using System.Collections.Generic;
 
 namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Queries
 {
@@ -22,7 +23,10 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Quer
         public async Task<PageList<LeaveAllocationDto>> Handle(GetLeaveAllocationListRequest request, CancellationToken cancellationToken)
         {
             var leaveAllocations = await _unitOfWork.LeaveAllocations.GetAllLeaveAllocationsWithDetailAsync(request.Page!.Value,request.PageSize!.Value);
-            return _mapper.Map<PageList<LeaveAllocationDto>>(leaveAllocations);
+
+            var items = _mapper.Map<List<LeaveAllocationDto>>(leaveAllocations.Items);
+
+            return new PageList<LeaveAllocationDto>(items,leaveAllocations.Page,leaveAllocations.PageSize,leaveAllocations.TotalCount);
         }
     }
 }

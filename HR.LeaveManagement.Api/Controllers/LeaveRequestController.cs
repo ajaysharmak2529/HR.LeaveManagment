@@ -142,7 +142,7 @@ namespace HR.LeaveManagement.Api.Controllers
             try
             {
                 var list = await _mediator.Send(new GetEmployeeLeaveRequestListRequest() { Page = page, PageSize = pageSize });
-                return Ok(ApiResponse<List<LeaveRequestListDto>>.Success(list, StatusCodes.Status200OK));
+                return Ok(ApiResponse<PageList<LeaveRequestListDto>>.Success(list, StatusCodes.Status200OK));
             }
             catch (Exception ex)
             {

@@ -4,6 +4,7 @@ using HR.LeaveManagement.Application.Contracts.Persistence;
 using HR.LeaveManagement.Application.DTOs.LeaveRequest;
 using HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Queries;
 using HR.LeaveManagement.Application.Helpers;
+using HR.LeaveManagement.Application.Models;
 using MediatR;
 using Microsoft.AspNetCore.Http;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Commands;
 
-public class GetEmployeeLeaveRequestListRequestHandler : IRequestHandler<GetEmployeeLeaveRequestListRequest, List<LeaveRequestListDto>>
+public class GetEmployeeLeaveRequestListRequestHandler : IRequestHandler<GetEmployeeLeaveRequestListRequest, PageList<LeaveRequestListDto>>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly IMapper _mapper;
@@ -24,13 +25,14 @@ public class GetEmployeeLeaveRequestListRequestHandler : IRequestHandler<GetEmpl
         _mapper = mapper;
         _request = httpContextAccessor.HttpContext.Request;
     }
-    public async Task<List<LeaveRequestListDto>> Handle(GetEmployeeLeaveRequestListRequest request, CancellationToken cancellationToken)
+    public async Task<PageList<LeaveRequestListDto>> Handle(GetEmployeeLeaveRequestListRequest request, CancellationToken cancellationToken)
     {
         string? userId = await _request.GetTokenClaims(CustomClaimTypes.Uid);
 
-        var list = await _unitOfWork.LeaveRequests.GetAllEmployeeLeaveRequestsWithDetailAsync(userId!,request.Page!.Value,request.PageSize!.Value);
-        var mappedList = _mapper.Map<List<LeaveRequestListDto>>(list);
-        return mappedList;
+        var list = await _unitOfWork.LeaveRequests.GetAllEmployeeLeaveRequestsWithDetailAsync(userId!, request.Page!.Value, request.PageSize!.Value);
+
+        var mappedList = _mapper.Map<List<LeaveRequestListDto>>(list.Items);
+        return new PageList<LeaveRequestListDto>(mappedList, list.Page, list.PageSize, list.TotalCount);
 
     }
 }

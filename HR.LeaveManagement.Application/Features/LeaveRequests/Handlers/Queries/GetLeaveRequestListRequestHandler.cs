@@ -4,6 +4,7 @@ using HR.LeaveManagement.Application.DTOs.LeaveRequest;
 using HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Queries;
 using HR.LeaveManagement.Application.Models;
 using MediatR;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -22,7 +23,10 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Queries
         public async Task<PageList<LeaveRequestListDto>> Handle(GetLeaveRequestListRequest request, CancellationToken cancellationToken)
         {
             var leaveRequests = await _unitOfWork.LeaveRequests.GetAllLeaveRequestsWithDetailAsync(request.Page!.Value,request.PageSize!.Value);
-            return _mapper.Map<PageList<LeaveRequestListDto>>(leaveRequests);
+
+            var items = _mapper.Map<List<LeaveRequestListDto>>(leaveRequests.Items);
+
+            return new PageList<LeaveRequestListDto>(items,leaveRequests.Page,leaveRequests.PageSize,leaveRequests.TotalCount);
         }
     }
 }

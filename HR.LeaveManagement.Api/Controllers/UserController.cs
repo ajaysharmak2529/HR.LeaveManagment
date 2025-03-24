@@ -3,6 +3,8 @@ using HR.LeaveManagement.Application.Models.Identity;
 using HR.LeaveManagement.Application.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using MediatR;
+using HR.LeaveManagement.Application.Features.Employees.Requests.Queries;
 
 namespace HR.LeaveManagement.Api.Controllers
 {
@@ -11,31 +13,33 @@ namespace HR.LeaveManagement.Api.Controllers
     [Authorize]
     public class UserController : ControllerBase
     {
-        private readonly IUserService _userService;
+        private readonly IMediator _mediator;
 
-        public UserController(IUserService userService)
+        public UserController( IMediator mediator)
         {
-            _userService = userService;
+            this._mediator = mediator;
         }
 
         [HttpGet("{userId}/Get")]
         public async Task<IActionResult> Me(string userId)
         {
-            var result = await _userService.GetEmployee(userId);
+            var result = await _mediator.Send(new GetEmployeeRequest() { UserId = userId});
+
             if (result.IsSuccess)
                 return Ok(ApiResponse<Employee>.Success(result.Data!, StatusCodes.Status200OK, result.Message));
             else
-                return BadRequest(ApiResponse<Employee>.Fail(result.Message!, StatusCodes.Status400BadRequest, result.Errors));
+                return BadRequest(ApiResponse<string>.Fail(result.Message!, StatusCodes.Status400BadRequest, result.Errors));
         }
-        [HttpGet("GetAll")]
-        public async Task<IActionResult> GetUsers()
-        {
-            var result = await _userService.GetEmployees();
 
-                if (result.IsSuccess)
-                    return Ok(ApiResponse<List<Employee>>.Success(result.Data!, StatusCodes.Status200OK, result.Message));
+        [HttpGet("GetAll")]
+        public async Task<IActionResult> GetUsers(int? page = 1, int pageSize = 10)
+        {
+            var result = await _mediator.Send(new GetEmployeesRequest() { Page = page, PageSize = pageSize });
+
+            if (result.IsSuccess)
+                    return Ok(ApiResponse<PageList<Employee>>.Success(result.Data!, StatusCodes.Status200OK, result.Message));
                 else
-                    return BadRequest(ApiResponse<List<Employee>>.Fail(result.Message!, StatusCodes.Status400BadRequest, result.Errors));
+                    return BadRequest(ApiResponse<string>.Fail(result.Message!, StatusCodes.Status400BadRequest, result.Errors));
         }
     }
 }
