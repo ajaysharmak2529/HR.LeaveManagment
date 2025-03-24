@@ -14,12 +14,15 @@ import Select, { Option } from "../../Components/Select";
 
 const Index = () => {
 
-    const { data } = useGetLeaveTypesQuery("");
+    const [page, setPage] = useState({ page: 1, pageSize: 1000 });
+    const [alocationPage, setAlocationPage] = useState({ page: 1, pageSize: 10 });
+
+    const { data } = useGetLeaveTypesQuery(page);
 
     const [leaveRequest, setLeaveRequest] = useState<CreateLeaveRequest>({ startDate: format(new Date(), "yyyy-MM-dd"), endDate: format(addDays(new Date(), 1), "yyyy-MM-dd"), dateRequested: format(new Date(), "dd/MM/yyyy"), leaveTypeId: 2, requestComments: "Test-1" })
     const [addLeaveRequest] = useAddLeaveRequestMutation();
     const { data: employeeReport } = useEmployeeReportQuery("");
-    const { data: employeeAloocations } = useGetEmployeeLeaveAllocarionsQuery("");
+    const { data: employeeAloocations } = useGetEmployeeLeaveAllocarionsQuery(alocationPage);
 
 
     const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {

@@ -16,7 +16,8 @@ import { FaTrashAlt } from "react-icons/fa";
 
 const LeaveTypes = () => {
 
-    const { isLoading, isError, error, data } = useGetLeaveTypesQuery("");
+    const [page, setPage] = useState({ page: 1, pageSize: 10});
+    const { isLoading, isError, error, data } = useGetLeaveTypesQuery(page);
     const [addLeaveType, { isLoading: addIsloading, error: addError }] = useAddLeaveTypeMutation();
     const [deleteLeaveType, { }] = useDeleteLeaveTypeMutation();
     const [updateLeaveType, { isError: updateIsError, error: updateError }] = useUpdateLeaveTypeMutation();
@@ -49,7 +50,7 @@ const LeaveTypes = () => {
     const handelEdit = async (id: number) => {
         seteditMode(true);
         dispatch(openModal());
-        const leaveType = data?.data?.find(type => type.id === id);
+        const leaveType = data?.data?.items.find(type => type.id === id);
         setLeaveType(leaveType as LeaveType);
     }
     const handelAddAllocation = async (id: number) => {
@@ -130,12 +131,12 @@ const LeaveTypes = () => {
                                     {/* Table Body */}
                                     <tbody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
                                         {
-                                            data?.data?.length == 0 ?
+                                            data?.data?.items?.length == 0 ?
                                                 <tr className="text-red-500 w-full">
                                                     <td className="px-2 py-4 sm:px-6 w-full text-center" colSpan={10}>No Data</td>
                                                 </tr>
                                                 :
-                                                data?.data?.map((leaveType) => (
+                                                data?.data?.items.map((leaveType) => (
                                                     <tr key={leaveType.id}>
                                                         <td className="px-2 py-4 sm:px-6 text-center">
                                                             <span className="block font-medium text-gray-800 text-theme-sm dark:text-white/90">

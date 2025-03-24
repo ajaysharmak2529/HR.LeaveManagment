@@ -5,12 +5,12 @@ import { CreateLeaveRequest, LeaveRequestType, UpdateLeaveRequest, ChangeApprove
 
 const LeaveRequestService = api.injectEndpoints({
     endpoints: (builder) => ({
-        getAllLeaveRequests: builder.query < ApiResponse<PageList<LeaveRequestType[]>>, string>({
-            query: () => '/LeaveRequest/GetAll',
+        getAllLeaveRequests: builder.query<ApiResponse<PageList<LeaveRequestType[]>>, { page: number, pageSize: number }>({
+            query: (query) => `/LeaveRequest/GetAll?page=${query.page}&pageSize=${query.pageSize}`,
             providesTags: ["LeaveRequest"]
         }),
-        getEmployeeLeaveRequests: builder.query < ApiResponse<PageList<LeaveRequestType[]>>, string>({
-            query: () => '/LeaveRequest/Employee',
+        getEmployeeLeaveRequests: builder.query<ApiResponse<PageList<LeaveRequestType[]>>, { page: number, pageSize: number }>({
+            query: (query) => `/LeaveRequest/Employee?page=${query.page}&pageSize=${query.pageSize}`,
             providesTags: ["LeaveRequest"]
         }),
         getLeaveRequest: builder.query<ApiResponse<LeaveRequestType>, number>({

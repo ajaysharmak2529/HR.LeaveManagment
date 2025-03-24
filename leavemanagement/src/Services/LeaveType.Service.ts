@@ -4,8 +4,8 @@ import { LeaveType, CreateLeaveTypeRequest } from "../Types/LeaveType.Type";
 
 const LeaveTypeService = api.injectEndpoints({
     endpoints: (builder) => ({
-        getLeaveTypes: builder.query < ApiResponse<PageList<LeaveType[]>>, string>({
-            query: () => '/LeaveType/GetAll',
+        getLeaveTypes: builder.query<ApiResponse<PageList<LeaveType[]>>, { page: number, pageSize: number }>({
+            query: (query) => `/LeaveType/GetAll?page=${query.page}&pageSize=${query.pageSize}`,
             providesTags: ["LeaveType"]
         }),
         getLeaveType: builder.mutation<ApiResponse<LeaveType>, number>({

@@ -4,11 +4,11 @@ import { LeaveAloocationType, CreateLeaveAllocation } from "../Types/LeaveAlloca
 
 const LeaveAllocationService = api.injectEndpoints({
     endpoints: (builder) => ({
-        getLeaveAllocarions: builder.query < ApiResponse<PageList<LeaveAloocationType[]>>, string>({
-            query: () => '/LeaveAllocation/GetAll'
+        getLeaveAllocarions: builder.query<ApiResponse<PageList<LeaveAloocationType[]>>, { page: number, pageSize: number }>({
+            query: (query) => `/LeaveAllocation/GetAll?page=${query.page}&pageSize=${query.pageSize}`
         }),
-        getEmployeeLeaveAllocarions: builder.query < ApiResponse<PageList<LeaveAloocationType[]>>, string>({
-            query: () => '/LeaveAllocation/Employee'
+        getEmployeeLeaveAllocarions: builder.query<ApiResponse<PageList<LeaveAloocationType[]>>, { page: number, pageSize: number }>({
+            query: (query) => `/LeaveAllocation/Employee?page=${query.page}&pageSize=${query.pageSize}`
         }),
         getAllocation: builder.query<ApiResponse<LeaveAloocationType>, number>({
             query: (id) => `/LeaveAllocation/${id}/Get`

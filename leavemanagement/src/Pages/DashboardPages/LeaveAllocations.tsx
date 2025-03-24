@@ -1,8 +1,10 @@
+import { useState } from "react";
 import Loader from "../../Components/Loader";
 import { useGetLeaveAllocarionsQuery } from "../../Services/LeaveAllocation.Service";
 
 const LeaveAllocations = () => {
-    const { isLoading, isError, error, data } = useGetLeaveAllocarionsQuery("");
+    const [page, setPage] = useState({ page: 1, pageSize: 10 });
+    const { isLoading, isError, error, data } = useGetLeaveAllocarionsQuery(page);
 
     return (
         isLoading ? <Loader /> : isError ? <p className="text-red-500 bold">Unable to fetch data {(error as any).error}</p> :
@@ -36,12 +38,12 @@ const LeaveAllocations = () => {
                                     {/* Table Body */}
                                     <tbody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
                                         {
-                                            data?.data?.length == 0 ?
+                                            data?.data?.items.length == 0 ?
                                                 <tr className="text-red-500 w-full">
                                                     <td className="px-2 py-4 sm:px-6 w-full text-center" colSpan={10}>No Data</td>
                                                 </tr>
                                                 :
-                                                data?.data?.map((leaveAllocation) => (
+                                                data?.data?.items.map((leaveAllocation) => (
                                                     <tr key={leaveAllocation.id}>
                                                         <td className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
                                                             {leaveAllocation.leaveType.name}

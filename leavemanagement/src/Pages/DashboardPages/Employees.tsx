@@ -7,10 +7,11 @@ import { openModal, closeModal } from "../../Redux/Slices/Modal.Slice"
 import { RootState } from "../../Redux/Store/Store"
 import { useSelector, useDispatch } from "react-redux"
 import { Modal } from "../../Components/Modal";
+import { useState } from "react";
 
 const Employees = () => {
-
-    const { isLoading, isError, error, data } = useGetEmployeesQuery("");
+    const [page, setPage] = useState({ page: 1, pageSize: 10 });
+    const { isLoading, isError, error, data } = useGetEmployeesQuery(page);
     const { isOpen } = useSelector((state: RootState) => state.modal);
     const dispatch = useDispatch();
 
@@ -18,59 +19,59 @@ const Employees = () => {
         isLoading ? <Loader /> : isError ? <p className="text-red-500 bold">Unable to fetch data {(error as any).error}</p> :
             < div >
                 <div className="min-h-screen rounded-2xl border border-gray-200 bg-white px-2 py-7 dark:border-gray-800 dark:bg-white/[0.03] xl:px-10 xl:py-12">
-                        <h3 className="mb-4 font-semibold text-gray-800 text-theme-xl dark:text-white/90 sm:text-2xl">
-                            Employees
+                    <h3 className="mb-4 font-semibold text-gray-800 text-theme-xl dark:text-white/90 sm:text-2xl">
+                        Employees
                     </h3>
                     <div className="flex justify-end mb-5">
                         <Button type="button" variant="outline" size="sm" onClick={() => { dispatch(openModal()) }}>Create</Button>
                     </div>
-                        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
-                            <div className="max-w-full overflow-x-auto">
-                                <div className="min-w-[720px]">
-                                    <table className="min-w-full">
-                                        {/* Table Header */}
-                                        <thead className="border-b border-gray-100 dark:border-white/[0.05]">
-                                            <tr>
-                                                <th className="px-2 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400">
-                                                    First Name
-                                                </th>
-                                                <th className="px-2 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400">
-                                                    Last Name
-                                                </th>
-                                                <th className="px-2 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400">
-                                                    Email
-                                                </th>
-                                            </tr>
-                                        </thead>
+                    <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
+                        <div className="max-w-full overflow-x-auto">
+                            <div className="min-w-[720px]">
+                                <table className="min-w-full">
+                                    {/* Table Header */}
+                                    <thead className="border-b border-gray-100 dark:border-white/[0.05]">
+                                        <tr>
+                                            <th className="px-2 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400">
+                                                First Name
+                                            </th>
+                                            <th className="px-2 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400">
+                                                Last Name
+                                            </th>
+                                            <th className="px-2 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400">
+                                                Email
+                                            </th>
+                                        </tr>
+                                    </thead>
 
-                                        {/* Table Body */}
-                                        <tbody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
+                                    {/* Table Body */}
+                                    <tbody className="divide-y divide-gray-100 dark:divide-white/[0.05]">
                                         {
-                                            data?.data?.items.length == 0 ?
-                                                    <tr className="text-red-500 w-full">
-                                                        <td className="px-2 py-4 sm:px-6 w-full text-center" colSpan={10}>No Data</td>
-                                                    </tr>
+                                            data?.data?.items?.length == 0 ?
+                                                <tr className="text-red-500 w-full">
+                                                    <td className="px-2 py-4 sm:px-6 w-full text-center" colSpan={10}>No Data</td>
+                                                </tr>
                                                 :
-                                                data?.data?.items.map((employee) => (
-                                                        <tr key={employee.id}>
-                                                            <td className="px-2 py-4 sm:px-6 text-center">
-                                                                        <span className="block font-medium text-gray-800 text-center text-theme-sm dark:text-white/90">
-                                                                            {employee.firstName}
-                                                                        </span>                                                                
-                                                            </td>
-                                                            <td className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
-                                                                {employee.lastName}
-                                                            </td>
-                                                            <td className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
-                                                                    {employee.email}                                                               
-                                                            </td>
-                                                        </tr>
-                                                    ))}
-                                        </tbody>
-                                    </table>
-                                </div>
+                                                data?.data?.items?.map((employee) => (
+                                                    <tr key={employee.id}>
+                                                        <td className="px-2 py-4 sm:px-6 text-center">
+                                                            <span className="block font-medium text-gray-800 text-center text-theme-sm dark:text-white/90">
+                                                                {employee.firstName}
+                                                            </span>
+                                                        </td>
+                                                        <td className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
+                                                            {employee.lastName}
+                                                        </td>
+                                                        <td className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
+                                                            {employee.email}
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                    </tbody>
+                                </table>
                             </div>
                         </div>
+                    </div>
                 </div>
                 <Modal isOpen={isOpen} onClose={() => { dispatch(closeModal()) }} isFullscreen={false} className="max-w-[700px] m-4">
                     <div className="no-scrollbar relative w-full max-w-[700px] overflow-y-auto rounded-3xl bg-white p-4 dark:bg-gray-900 lg:p-11">
