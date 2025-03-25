@@ -13,10 +13,11 @@ import { useAddAllocationMutation } from "../../Services/LeaveAllocation.Service
 import { LeaveType, } from "../../Types/LeaveType.Type";
 import { FaPencil } from "react-icons/fa6";
 import { FaTrashAlt } from "react-icons/fa";
+import Pagination from "../../Components/Pagination";
 
 const LeaveTypes = () => {
 
-    const [page, setPage] = useState({ page: 1, pageSize: 10});
+    const [page, setPage] = useState({ page: 1, pageSize: 2 });
     const { isLoading, isError, error, data } = useGetLeaveTypesQuery(page);
     const [addLeaveType, { isLoading: addIsloading, error: addError }] = useAddLeaveTypeMutation();
     const [deleteLeaveType, { }] = useDeleteLeaveTypeMutation();
@@ -35,7 +36,7 @@ const LeaveTypes = () => {
         setLeaveType({ id: 0, defaultDays: 0, name: "" });
     }
     const handelDelete = async (id: number) => {
-        var { data:deleteData, error:deleteError } = await deleteLeaveType(id);
+        var { data: deleteData, error: deleteError } = await deleteLeaveType(id);
         if (deleteData) {
             if (deleteData.isSuccess) {
 
@@ -166,6 +167,18 @@ const LeaveTypes = () => {
                                 </table>
                             </div>
                         </div>
+                    </div>
+                    <div className="flex justify-end mt-4">
+                        <Pagination
+                            hasNextPage={data?.data?.hasNextPage ?? false}
+                            hasPreviousPage={data?.data?.hasPreviousPage ?? false}
+                            activePage={data?.data?.page ?? 1}
+                            onNext={() => { setPage({ ...page, page: page.page + 1 }) }}
+                            onPrevious={() => { setPage({ ...page, page: page.page - 1 }) }}
+                            pageSize={data?.data?.pageSize ?? 1}
+                            totalCount={data?.data?.totalCount ?? 1}
+                            onSetPage={(p) => { setPage({ ...page, page: p }) }}
+                        />
                     </div>
                 </div>
                 <Modal isOpen={isOpen} onClose={handelCloseModal} isFullscreen={false} className="max-w-[700px] m-4">

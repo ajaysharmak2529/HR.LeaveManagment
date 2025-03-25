@@ -8,9 +8,10 @@ import { RootState } from "../../Redux/Store/Store"
 import { useSelector, useDispatch } from "react-redux"
 import { Modal } from "../../Components/Modal";
 import { useState } from "react";
+import Pagination from "../../Components/Pagination";
 
 const Employees = () => {
-    const [page, setPage] = useState({ page: 1, pageSize: 10 });
+    const [page, setPage] = useState({ page: 1, pageSize: 2 });
     const { isLoading, isError, error, data } = useGetEmployeesQuery(page);
     const { isOpen } = useSelector((state: RootState) => state.modal);
     const dispatch = useDispatch();
@@ -71,6 +72,18 @@ const Employees = () => {
                                 </table>
                             </div>
                         </div>
+                    </div>
+                    <div className="flex justify-end mt-4">
+                            <Pagination
+                                hasNextPage={data?.data?.hasNextPage ?? false}
+                                hasPreviousPage={data?.data?.hasPreviousPage ?? false}
+                                activePage={data?.data?.page ?? 1}
+                                onNext={() => { setPage({ ...page, page: page.page + 1 }) }}
+                                onPrevious={() => { setPage({ ...page, page: page.page - 1 }) }}
+                                pageSize={data?.data?.pageSize ?? 1}
+                                totalCount={data?.data?.totalCount ?? 1}
+                            onSetPage={(p) => { setPage({ ...page, page: p }) }}
+                            />
                     </div>
                 </div>
                 <Modal isOpen={isOpen} onClose={() => { dispatch(closeModal()) }} isFullscreen={false} className="max-w-[700px] m-4">

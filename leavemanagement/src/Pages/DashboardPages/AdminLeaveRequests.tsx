@@ -3,12 +3,15 @@ import { useGetEmployeeLeaveRequestsQuery, useChnageApprovalLeaveRequestMutation
 import { RootState } from "../../Redux/Store/Store"
 import { useSelector } from "react-redux"
 import Button from "../../Components/Button";
+import Pagination from "../../Components/Pagination";
 import Badge from "../../Components/Badge";
 import { LeaveRequestType } from "../../Types/LeaveRequest.Type"
+import { useState } from "react";
 
 const AdminLeaveRequests = () => {
 
-    const { isLoading, isError, error, data } = useGetEmployeeLeaveRequestsQuery("");
+    const [page, setPage] = useState({ page: 1, pageSize: 2 });
+    const { isLoading, isError, error, data } = useGetEmployeeLeaveRequestsQuery(page);
     const [changeApprovel] = useChnageApprovalLeaveRequestMutation();
     const [updateLeaveRequest] = useUpdateLeaveRequestMutation();
 
@@ -108,6 +111,18 @@ const AdminLeaveRequests = () => {
                                 </table>
                             </div>
                         </div>
+                    </div>
+                    <div className="flex justify-end mt-4">
+                        <Pagination
+                            hasNextPage={data?.data?.hasNextPage ?? false}
+                            hasPreviousPage={data?.data?.hasPreviousPage ?? false}
+                            activePage={data?.data?.page ?? 1}
+                            onNext={() => { setPage({ ...page, page: page.page + 1 }) }}
+                            onPrevious={() => { setPage({ ...page, page: page.page - 1 }) }}
+                            pageSize={data?.data?.pageSize ?? 1}
+                            totalCount={data?.data?.totalCount ?? 1}
+                            onSetPage={(p) => { setPage({ ...page, page: p }) }}
+                        />
                     </div>
                 </div>
             </div>
