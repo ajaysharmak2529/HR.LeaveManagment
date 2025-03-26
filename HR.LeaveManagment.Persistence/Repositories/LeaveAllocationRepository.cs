@@ -26,10 +26,10 @@ namespace HR.LeaveManagement.Persistence.Repositories
         }
         public async Task<PageList<AllocationGroupResultDto>> GetAllAdminLeaveAllocationsWithDetailAsync(int? page, int? pageSize)
         {
-            var result = _dbContext.LeaveAllocations.Include(x => x.LeaveType).GroupBy(x => new { x.Period, x.LeaveTypeId, x.LeaveType }).Select(g =>
+            var result = _dbContext.LeaveAllocations.Include(x => x.LeaveType).GroupBy(x => new { x.Period, x.LeaveTypeId, x.LeaveType.Name }).Select(g =>
             new AllocationGroupResultDto
             {
-                LeaveType = g.Key.LeaveType.Name,
+                LeaveType = g.Key.Name,
                 Year = g.Key.Period,
                 EmployeeCount = g.Count()
             });

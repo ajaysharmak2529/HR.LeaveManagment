@@ -46,6 +46,19 @@ namespace HR.LeaveManagement.Api.Controllers
                 return BadRequest(ApiResponse<string>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
             }
         }
+        [HttpGet("Admin")]
+        public async Task<ActionResult> GetAdminAllocations(int? page = 1, int? pageSize = 10)
+        {
+            try
+            {
+                var LeaveAllocations = await _mediator.Send(new GetAdminAllocationListRequest() { Page = page, PageSize = pageSize });
+                return Ok(ApiResponse<PageList<AllocationGroupResultDto>>.Success(LeaveAllocations, StatusCodes.Status200OK));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ApiResponse<string>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+            }
+        }
 
         [HttpGet("{id}/Get")]
         public async Task<ActionResult> Get(int id)
@@ -81,7 +94,6 @@ namespace HR.LeaveManagement.Api.Controllers
                 return BadRequest(ApiResponse<string>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
             }
         }
-
 
         [HttpPut("Update")]
         public async Task<ActionResult> Put([FromBody] UpdateLeaveAllocationDto LeaveAllocationDto)
