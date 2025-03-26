@@ -14,6 +14,7 @@ import { LeaveType, } from "../../Types/LeaveType.Type";
 import { FaPencil } from "react-icons/fa6";
 import { FaTrashAlt } from "react-icons/fa";
 import Pagination from "../../Components/Pagination";
+import { toast } from 'react-toastify';
 
 const LeaveTypes = () => {
 
@@ -21,7 +22,7 @@ const LeaveTypes = () => {
     const { isLoading, isError, error, data } = useGetLeaveTypesQuery(page);
     const [addLeaveType, { isLoading: addIsloading, error: addError }] = useAddLeaveTypeMutation();
     const [deleteLeaveType, { }] = useDeleteLeaveTypeMutation();
-    const [updateLeaveType, { isError: updateIsError, error: updateError }] = useUpdateLeaveTypeMutation();
+    const [updateLeaveType, { isError: updateIsError }] = useUpdateLeaveTypeMutation();
     const [addAllocation] = useAddAllocationMutation();
 
     const { isOpen } = useSelector((state: RootState) => state.modal);
@@ -39,9 +40,11 @@ const LeaveTypes = () => {
         var { data: deleteData, error: deleteError } = await deleteLeaveType(id);
         if (deleteData) {
             if (deleteData.isSuccess) {
-
+                toast.success(deleteData.message);
             } else {
-                console.error(data)
+                for (let i = 0; i < deleteData.errors.length; i++) {
+                    toast.error(deleteData.errors[i]);
+                }
             }
         }
         if (deleteError) {
@@ -72,24 +75,36 @@ const LeaveTypes = () => {
         e.preventDefault();
 
         if (!isEditMode) {
-            const { data } = await addLeaveType({ name: leaveType.name, defaultDays: leaveType.defaultDays });
+            const { data, error: addError } = await addLeaveType({ name: leaveType.name, defaultDays: leaveType.defaultDays });
 
-            if (data?.isSuccess) {
-                handelCloseModal();
-
-            } else {
-                console.log(addError);
+            if (data) {
+                if (data?.isSuccess) {
+                    handelCloseModal();
+                    toast.success(data.message);
+                } else {
+                    for (let i = 0; i < data?.errors?.length; i++) {
+                        toast.error(data.errors[i]);
+                    }
+                }
+            }
+            if (addError) {
+                console.error(addError);
             }
 
 
         } else {
-            const { data } = await updateLeaveType(leaveType);
+            const { data, error: updateError } = await updateLeaveType(leaveType);
 
-            if (data?.isSuccess) {
-                handelCloseModal();
+            if (data) {
+                if (data?.isSuccess) {
+                    toast.success(data.message);
+                    handelCloseModal();
 
-            } else {
-                console.log(data);
+                } else {
+                    for (let i = 0; i < data?.errors?.length; i++) {
+                        toast.error(data.errors[i]);
+                    }
+                }
             }
             if (updateIsError) {
                 console.log(updateError);
@@ -214,7 +229,7 @@ const LeaveTypes = () => {
                                 <Button size="sm" variant="outline" onClick={handelCloseModal} type="button">
                                     Close
                                 </Button>
-                                <Button size="sm" disabled={addIsloading} type="button">
+                                <Button size="sm" disabled={addIsloading} type="submit">
                                     {addIsloading ? "Processing ..." : "Save Changes"}
                                 </Button>
                             </div>

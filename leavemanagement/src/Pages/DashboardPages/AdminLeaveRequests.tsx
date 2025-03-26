@@ -7,6 +7,8 @@ import Pagination from "../../Components/Pagination";
 import Badge from "../../Components/Badge";
 import { LeaveRequestType } from "../../Types/LeaveRequest.Type"
 import { useState } from "react";
+import { toast } from 'react-toastify';
+
 
 const AdminLeaveRequests = () => {
 
@@ -22,6 +24,13 @@ const AdminLeaveRequests = () => {
         const { data: updateData, error } = await updateLeaveRequest({ cancelled: true, startDate: request.startDate, endDate: request.endDate, id: id, leaveTypeId: request.leaveType.id, requestComments: request.requestComments })
 
         if (updateData !== undefined) {
+            if (updateData.isSuccess) {
+                toast.success(updateData.message);
+            } else {
+                for (let i = 0; i < updateData.errors.length; i++) {
+                    toast.error(updateData.errors[i]);
+                }
+            }
             console.log(updateData);
         }
         if (error !== undefined) {

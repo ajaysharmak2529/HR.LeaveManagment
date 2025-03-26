@@ -11,6 +11,7 @@ import LeaveAllocations from "../Pages/DashboardPages/LeaveAllocations";
 import Employees from "../Pages/DashboardPages/Employees";
 import Dashboard from "../Pages/DashboardPages/Dashboard";
 import NotFound from "../Pages/Shared/NotFound";
+import AdminLeaveAllocations from "../Pages/DashboardPages/AdminLeaveAllocations";
 
 const AppRoutes = () => {
     return (
@@ -35,7 +36,7 @@ const AppRoutes = () => {
                         <Route path="/dashboard" element={<Dashboard />} />
                         <Route path="/dashboard/leave-types" element={<LeaveTypes />} />
                         <Route path="/dashboard/leave-requests" element={<AdminLeaveRequests />} />
-                        <Route path="/dashboard/leave-allocations" element={<LeaveAllocations />} />
+                        <Route path="/dashboard/leave-allocations" element={<AdminLeaveAllocations />} />
                         <Route path="/dashboard/leave-employees" element={<Employees />} />
                     </Route>
                 </Route>

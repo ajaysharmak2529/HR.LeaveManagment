@@ -9,6 +9,11 @@ export type LeaveAloocationType = {
     leaveTypeId: number,
     period: number
 }
+export type AdminLeaveAloocationType = {
+    leaveType: string,
+    year: number,
+    employeeCount: number
+}
 
 export type CreateLeaveAllocation = {
     leaveTypeId: number
