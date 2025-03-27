@@ -25,12 +25,19 @@ namespace HR.LeaveManagement.Persistence.Repositories
 
         public async Task<PageList<LeaveRequest>> GetAllLeaveRequestsWithDetailAsync(int page, int pageSize)
         {
-            var query = _dbContext.LeaveRequests.Include(x=>x.LeaveType);
+            var query = _dbContext.LeaveRequests
+                .Include(x=>x.LeaveType)
+                .OrderByDescending(x => x.DateCreated);
+
             return await PageList<LeaveRequest>.CreateAsync(query, page, pageSize);
         }
         public async Task<PageList<LeaveRequest>> GetAllEmployeeLeaveRequestsWithDetailAsync(string userId, int page, int pageSize)
         {
-            var query = _dbContext.LeaveRequests.Where(x=>x.EmployeeId == userId).Include(x=>x.LeaveType);
+            var query = _dbContext.LeaveRequests
+                .Where(x=>x.EmployeeId == userId)
+                .Include(x=>x.LeaveType)
+                .OrderByDescending(x => x.DateCreated);
+
             return await PageList<LeaveRequest>.CreateAsync(query, page, pageSize);
         }
 

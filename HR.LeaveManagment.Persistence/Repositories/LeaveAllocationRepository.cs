@@ -21,30 +21,41 @@ namespace HR.LeaveManagement.Persistence.Repositories
 
         public async Task<PageList<LeaveAllocation>> GetAllLeaveAllocationsWithDetailAsync(int? page, int? pageSize)
         {
-            var query = _dbContext.LeaveAllocations.Include(x => x.LeaveType);
+            var query = _dbContext.LeaveAllocations
+                .Include(x => x.LeaveType)
+                .OrderByDescending(x => x.DateCreated);
+
             return await PageList<LeaveAllocation>.CreateAsync(query, page!.Value, pageSize!.Value);
         }
         public async Task<PageList<AllocationGroupResultDto>> GetAllAdminLeaveAllocationsWithDetailAsync(int? page, int? pageSize)
         {
-            var result = _dbContext.LeaveAllocations.Include(x => x.LeaveType).GroupBy(x => new { x.Period, x.LeaveTypeId, x.LeaveType.Name }).Select(g =>
-            new AllocationGroupResultDto
-            {
-                LeaveType = g.Key.Name,
-                Year = g.Key.Period,
-                EmployeeCount = g.Count()
-            });
+            var result = _dbContext.LeaveAllocations.Include(x => x.LeaveType)
+                .OrderByDescending(x => x.DateCreated)
+                .GroupBy(x => new { x.Period, x.LeaveTypeId, x.LeaveType.Name })
+                .Select(g => new AllocationGroupResultDto
+                {
+                    LeaveType = g.Key.Name,
+                    Year = g.Key.Period,
+                    EmployeeCount = g.Count()
+                });
 
             return await PageList<AllocationGroupResultDto>.CreateAsync(result, page!.Value, pageSize!.Value);
         }
         public async Task<PageList<LeaveAllocation>> GetAllEmployeeLeaveAllocationsWithDetailAsync(string userId, int? page, int? pageSize)
         {
-            var query = _dbContext.LeaveAllocations.Where(x => x.EmployeeId == userId && x.Period == DateTime.Now.Year).Include(x => x.LeaveType);
+            var query = _dbContext.LeaveAllocations
+                .Where(x => x.EmployeeId == userId && x.Period == DateTime.Now.Year)
+                .OrderByDescending(x => x.DateCreated)
+                .Include(x => x.LeaveType);
+
             return await PageList<LeaveAllocation>.CreateAsync(query, page!.Value, pageSize!.Value);
         }
 
         public async Task<LeaveAllocation?> GetLeaveAllocationWithDetailAsync(int id)
         {
-            return await _dbContext.LeaveAllocations.Include(x => x.LeaveType).FirstOrDefaultAsync(x => x.Id == id);
+            return await _dbContext.LeaveAllocations
+                .Include(x => x.LeaveType)
+                .FirstOrDefaultAsync(x => x.Id == id);
         }
         public async Task AddAllocationsAsync(List<LeaveAllocation> allocations)
         {
@@ -63,7 +74,7 @@ namespace HR.LeaveManagement.Persistence.Repositories
         }
         public async Task<LeaveAllocation?> GetUserAllocationsAsync(string userId, int leaveTypeId)
         {
-            return await _dbContext.LeaveAllocations.FirstOrDefaultAsync( q => q.EmployeeId == userId && q.LeaveTypeId == leaveTypeId);
+            return await _dbContext.LeaveAllocations.FirstOrDefaultAsync(q => q.EmployeeId == userId && q.LeaveTypeId == leaveTypeId);
         }
     }
 }

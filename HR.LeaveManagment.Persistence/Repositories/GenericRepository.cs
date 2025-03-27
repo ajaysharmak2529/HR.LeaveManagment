@@ -1,6 +1,8 @@
 ﻿using HR.LeaveManagement.Application.Contracts.Persistence;
 using HR.LeaveManagement.Application.Models;
+using HR.LeaveManagement.Domain.Common;
 using Microsoft.EntityFrameworkCore;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace HR.LeaveManagement.Persistence.Repositories
@@ -35,7 +37,8 @@ namespace HR.LeaveManagement.Persistence.Repositories
 
         public async Task<PageList<T>> GetAllAsync(int? page = 1, int? pageSize = 10)
         {
-            return await PageList<T>.CreateAsync(Table,page!.Value,pageSize!.Value);
+            var query = Table.OrderByDescending(x => (x as BaseDomainEntity)!.DateCreated);
+            return await PageList<T>.CreateAsync(query, page!.Value, pageSize!.Value);
         }
 
         public async Task<T> GetAsync(int id)
