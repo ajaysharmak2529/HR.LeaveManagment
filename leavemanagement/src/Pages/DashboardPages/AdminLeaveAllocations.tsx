@@ -7,6 +7,10 @@ const AdminLeaveAllocations = () => {
     const [page, setPage] = useState({ page: 1, pageSize: 10 });
     const { isLoading, isError, error, data } = useGetAdminLeaveAllocarionsQuery(page);
 
+    if (error) {
+        console.error(error);
+    }
+
     return (
         isLoading ? <Loader /> : isError ? <p className="text-red-500 bold">Unable to fetch data {(error as any).error}</p> :
             <div>

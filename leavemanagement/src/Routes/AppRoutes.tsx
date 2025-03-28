@@ -7,7 +7,6 @@ import AdminLeaveRequests from "../Pages/DashboardPages/AdminLeaveRequests";
 import Index from "../Pages/UserPages/Index";
 import EmployeeLeaveRequests from "../Pages/UserPages/EmployeeLeaveRequests";
 import LeaveTypes from "../Pages/DashboardPages/LeaveTypes";
-import LeaveAllocations from "../Pages/DashboardPages/LeaveAllocations";
 import Employees from "../Pages/DashboardPages/Employees";
 import Dashboard from "../Pages/DashboardPages/Dashboard";
 import NotFound from "../Pages/Shared/NotFound";

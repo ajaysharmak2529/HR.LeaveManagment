@@ -1,10 +1,17 @@
 import Loader from "../../Components/Loader";
 import { useGetEmployeeLeaveRequestsQuery } from "../../Services/LeaveRequest.Service";
 import Badge from "../../Components/Badge";
+import Pagination from "../../Components/Pagination";
+import { useState } from "react";
 
 const EmployeeLeaveRequests = () => {
 
-    const { isLoading, isError, error, data } = useGetEmployeeLeaveRequestsQuery("");
+    const [page, setPage] = useState({ page: 1, pageSize: 10 });
+    const { isLoading, isError, error, data } = useGetEmployeeLeaveRequestsQuery(page);
+
+    if (error) {
+        console.error(error);
+    }
 
     return (
         isLoading ? <Loader /> : isError ? <p className="text-red-500 bold">Unable to fetch data {(error as any).error}</p> :
@@ -27,10 +34,7 @@ const EmployeeLeaveRequests = () => {
                                                 Default Days
                                             </th>
                                             <th className="px-2 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400">
-                                                Is Approved
-                                            </th>
-                                            <th className="px-2 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400">
-                                                Is Cancelled
+                                                Status
                                             </th>
                                             <th className="px-2 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400">
                                                 Leave Requested
@@ -55,13 +59,8 @@ const EmployeeLeaveRequests = () => {
                                                             {request.leaveType.defaultDays}
                                                         </td>
                                                         <td className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
-                                                            <Badge variant="solid" size="md" color={request.approved ? "success" : "warning"}>
-                                                                {request.approved ? "Approved" : "Pending"}
-                                                            </Badge>
-                                                        </td>
-                                                        <td className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
-                                                            <Badge variant="solid" size="md" color={request.cancelled ? "error" : "warning"}>
-                                                                {request.cancelled ? "Cancelled" : "Not-Cancelled"}
+                                                            <Badge variant="solid" size="md" color={request.approved ? "success" : request.cancelled ? "error" : "warning"}>
+                                                                {request.approved ? "Approved" : request.cancelled ? "Cancelled" : "Pending"}
                                                             </Badge>
                                                         </td>
                                                         <td className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
@@ -74,9 +73,22 @@ const EmployeeLeaveRequests = () => {
                             </div>
                         </div>
                     </div>
+                    <div className="flex justify-end mt-4">
+                        <Pagination
+                            hasNextPage={data?.data?.hasNextPage ?? false}
+                            hasPreviousPage={data?.data?.hasPreviousPage ?? false}
+                            activePage={data?.data?.page ?? 1}
+                            onNext={() => { setPage({ ...page, page: page.page + 1 }) }}
+                            onPrevious={() => { setPage({ ...page, page: page.page - 1 }) }}
+                            pageSize={data?.data?.pageSize ?? 1}
+                            totalCount={data?.data?.totalCount ?? 1}
+                            onSetPage={(p) => { setPage({ ...page, page: p }) }}
+                        />
+                    </div>
                 </div>
             </div>
     );
 }
 
 export default EmployeeLeaveRequests;
+

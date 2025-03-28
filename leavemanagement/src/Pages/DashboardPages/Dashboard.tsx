@@ -30,28 +30,6 @@ const Dashboard = () => {
                         <p className="text-2xl font-bold">{adminReport?.data.pending}</p>
                     </div>
                 </div>
-
-                <h3 className="text-xl font-semibold mb-4">Leave Types Breakdown</h3>
-                <div className="space-y-4">
-                    {/*{leaveTypes.map(type => {*/}
-                    {/*    const typeStats = stats.byType[type.id];*/}
-                    {/*    return (*/}
-                    {/*        <div key={type.id} className="bg-gray-50 p-4 rounded-lg">*/}
-                    {/*            <h4 className="font-medium text-gray-700">{type.name}</h4>*/}
-                    {/*            <div className="grid grid-cols-2 gap-4 mt-2">*/}
-                    {/*                <div>*/}
-                    {/*                    <p className="text-sm text-gray-500">Total Requests</p>*/}
-                    {/*                    <p className="text-lg font-semibold">{typeStats.total}</p>*/}
-                    {/*                </div>*/}
-                    {/*                <div>*/}
-                    {/*                    <p className="text-sm text-gray-500">Approved</p>*/}
-                    {/*                    <p className="text-lg font-semibold">{typeStats.approved}</p>*/}
-                    {/*                </div>*/}
-                    {/*            </div>*/}
-                    {/*        </div>*/}
-                    {/*    );*/}
-                    {/*})}*/}
-                </div>
             </div>
         </>
     );

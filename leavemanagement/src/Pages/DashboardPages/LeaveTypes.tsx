@@ -18,10 +18,10 @@ import { toast } from 'react-toastify';
 
 const LeaveTypes = () => {
 
-    const [page, setPage] = useState({ page: 1, pageSize: 2 });
+    const [page, setPage] = useState({ page: 1, pageSize: 10 });
     const { isLoading, isError, error, data } = useGetLeaveTypesQuery(page);
-    const [addLeaveType, { isLoading: addIsloading, error: addError }] = useAddLeaveTypeMutation();
-    const [deleteLeaveType, { }] = useDeleteLeaveTypeMutation();
+    const [addLeaveType, { isLoading: addIsloading }] = useAddLeaveTypeMutation();
+    const [deleteLeaveType] = useDeleteLeaveTypeMutation();
     const [updateLeaveType, { isError: updateIsError }] = useUpdateLeaveTypeMutation();
     const [addAllocation] = useAddAllocationMutation();
 
@@ -36,6 +36,7 @@ const LeaveTypes = () => {
         seteditMode(false);
         setLeaveType({ id: 0, defaultDays: 0, name: "" });
     }
+
     const handelDelete = async (id: number) => {
         var { data: deleteData, error: deleteError } = await deleteLeaveType(id);
         if (deleteData) {
@@ -62,8 +63,11 @@ const LeaveTypes = () => {
 
         if (addAllocationData) {
             if (addAllocationData.isSuccess) {
+                toast.success(addAllocationData.message)
             } else {
-                console.error(addAllocationData);
+                for (let i = 0; i < addAllocationData.errors.length; i++) {
+                    toast.error(addAllocationData.errors[i]);
+                }
             }
         }
         if (addAlocationError) {
@@ -79,8 +83,8 @@ const LeaveTypes = () => {
 
             if (data) {
                 if (data?.isSuccess) {
-                    handelCloseModal();
                     toast.success(data.message);
+                    handelCloseModal();
                 } else {
                     for (let i = 0; i < data?.errors?.length; i++) {
                         toast.error(data.errors[i]);

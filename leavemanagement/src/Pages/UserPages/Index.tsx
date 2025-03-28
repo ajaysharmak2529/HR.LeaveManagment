@@ -11,6 +11,8 @@ import Button from "../../Components/Button";
 import Label from "../../Components/Label";
 import { format, addDays } from 'date-fns';
 import Select, { Option } from "../../Components/Select";
+import { toast } from 'react-toastify';
+
 
 const Index = () => {
 
@@ -34,9 +36,14 @@ const Index = () => {
 
         if (response) {
             if (response?.isSuccess) {
-                console.log(response?.message)
+
+                toast.success(response.message);
+
             } else if (!response?.isSuccess) {
-                console.log(response?.errors)
+
+                for (let i = 0; i < response.errors.length; i++) {
+                    toast.error(response.errors[i]);
+                }
             }
         }
 
@@ -48,7 +55,7 @@ const Index = () => {
         value: type.id,
         label: type.name,
     })) ?? [];
-
+    console.log(employeeAloocations?.data)
     return (
         <>
             <div className="bg-white p-6 rounded-lg shadow-md dark:border-gray-800 dark:bg-white/[0.03] dark:text-white">
@@ -141,7 +148,7 @@ const Index = () => {
                     </div>
                 </div>
 
-                
+
             </div>
         </>
     )

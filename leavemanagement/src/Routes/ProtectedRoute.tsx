@@ -14,14 +14,13 @@ interface ProtectedRouteProps {
 
 
 const ProtectedRoute = ({ role }: ProtectedRouteProps) => {
-    const logedInUser = useSelector((state: RootState) => state.LogedInUser);
+    const { accessToken, refreshToken, roles } = useSelector((state: RootState) => state.LogedInUser);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [refresh, { isLoading, isError, error }] = useRefreshTokenMutation();
 
 
     useEffect(() => {
-        const { accessToken, refreshToken } = logedInUser;
         if (accessToken === "" || accessToken === undefined || accessToken === null) {
             if (refreshToken !== "") {
                 refresh(refreshToken).then(({ data, error }) => {
@@ -39,21 +38,21 @@ const ProtectedRoute = ({ role }: ProtectedRouteProps) => {
                         console.log(`Error ${(error as any).data}`)
                     }
                 })
-            } else {                
+            } else {
                 navigate("/SignUp", { replace: true });
             }
         }
-    }, [logedInUser])
+    }, [accessToken])
 
     if (role !== undefined) {
-        if (!logedInUser.roles?.includes(role)) {
+        if (!roles?.includes(role)) {
             navigate("/", { replace: true });
         }
     }
 
     if (isLoading) return <Loader />
 
-    
+
     if (isError) {
         console.log(error)
         return <Navigate to="/SignUp" replace={true} />

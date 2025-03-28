@@ -1,5 +1,5 @@
 import Loader from "../../Components/Loader";
-import { useGetEmployeeLeaveRequestsQuery, useChnageApprovalLeaveRequestMutation, useUpdateLeaveRequestMutation, useGetLeaveRequestQuery } from "../../Services/LeaveRequest.Service";
+import { useGetAllLeaveRequestsQuery, useChnageApprovalLeaveRequestMutation, useUpdateLeaveRequestMutation, useGetLeaveRequestQuery } from "../../Services/LeaveRequest.Service";
 import { RootState } from "../../Redux/Store/Store"
 import { useSelector } from "react-redux"
 import Button from "../../Components/Button";
@@ -12,8 +12,8 @@ import { toast } from 'react-toastify';
 
 const AdminLeaveRequests = () => {
 
-    const [page, setPage] = useState({ page: 1, pageSize: 2 });
-    const { isLoading, isError, error, data } = useGetEmployeeLeaveRequestsQuery(page);
+    const [page, setPage] = useState({ page: 1, pageSize: 10 });
+    const { isLoading, isError, error, data } = useGetAllLeaveRequestsQuery(page);
     const [changeApprovel] = useChnageApprovalLeaveRequestMutation();
     const [updateLeaveRequest] = useUpdateLeaveRequestMutation();
 
@@ -23,21 +23,42 @@ const AdminLeaveRequests = () => {
         const request = data?.data.items.find(x => x.id == id) as LeaveRequestType;
         const { data: updateData, error } = await updateLeaveRequest({ cancelled: true, startDate: request.startDate, endDate: request.endDate, id: id, leaveTypeId: request.leaveType.id, requestComments: request.requestComments })
 
-        if (updateData !== undefined) {
+        if (updateData) {
+
             if (updateData.isSuccess) {
                 toast.success(updateData.message);
-            } else {
+            }
+            else {
+
                 for (let i = 0; i < updateData.errors.length; i++) {
                     toast.error(updateData.errors[i]);
                 }
             }
-            console.log(updateData);
         }
-        if (error !== undefined) {
+        if (error) {
+            console.error(error);
+        }
+    }
+
+    const handelChangeApproval = async (id: number) => {
+        const { data, error } = await changeApprovel({ id, approved: true })
+
+        if (data) {
+            if (data.isSuccess) {
+                toast.success(data.message);
+            }
+            else {
+                for (let i = 0; i < data.errors.length; i++) {
+                    toast.error(data.errors[i]);
+                }
+            }
+        }
+        else if (error) {
             console.error(error);
         }
 
     }
+
     return (
         isLoading ? <Loader /> : isError ? <p className="text-red-500 bold">Unable to fetch data {(error as any).error}</p> :
             <div>
@@ -59,10 +80,7 @@ const AdminLeaveRequests = () => {
                                                 Default Days
                                             </th>
                                             <th className="px-2 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400">
-                                                Is Approved
-                                            </th>
-                                            <th className="px-2 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400">
-                                                Is Cancelled
+                                                Status
                                             </th>
                                             <th className="px-2 py-3 font-medium text-gray-500 text-center text-theme-xs dark:text-gray-400">
                                                 Leave Requested
@@ -90,13 +108,8 @@ const AdminLeaveRequests = () => {
                                                             {request.leaveType.defaultDays}
                                                         </td>
                                                         <td className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
-                                                            <Badge variant="solid" size="md" color={request.approved ? "success" : "warning"}>
-                                                                {request.approved ? "Approved" : "Pending"}
-                                                            </Badge>
-                                                        </td>
-                                                        <td className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
-                                                            <Badge variant="solid" size="md" color={request.cancelled ? "error" : "warning"}>
-                                                                {request.cancelled ? "Cancelled" : "Not-Cancelled"}
+                                                            <Badge variant="solid" size="md" color={request.approved ? "success" : request.cancelled ? "error" : "warning"}>
+                                                                {request.approved ? "Approved" : request.cancelled ? "Cancelled" : "Pending"}
                                                             </Badge>
                                                         </td>
                                                         <td className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
@@ -105,7 +118,7 @@ const AdminLeaveRequests = () => {
                                                         {isAdmin && <td className="px-4 py-3 text-gray-500 text-center text-theme-sm dark:text-gray-400">
                                                             <div className="flex justify-center gap-4">
                                                                 {(!request.approved && !request.cancelled) ? <>
-                                                                    <Button type="button" size="sm" onClick={() => { changeApprovel({ id: request.id, approved: true }) }} variant="primary">
+                                                                    <Button type="button" size="sm" onClick={async () => { await handelChangeApproval(request.id) }} variant="primary">
                                                                         Approve
                                                                     </Button>
                                                                     <Button type="button" size="sm" onClick={() => { handelCancel(request.id) }} variant="outline">

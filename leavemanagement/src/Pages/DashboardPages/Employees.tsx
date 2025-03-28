@@ -1,4 +1,4 @@
-import Loader from "../../Components/Loader";
+    import Loader from "../../Components/Loader";
 import { useGetEmployeesQuery } from "../../Services/Employee.Service";
 import Button from "../../Components/Button";
 import Input from "../../Components/InputField";
@@ -15,6 +15,10 @@ const Employees = () => {
     const { isLoading, isError, error, data } = useGetEmployeesQuery(page);
     const { isOpen } = useSelector((state: RootState) => state.modal);
     const dispatch = useDispatch();
+
+    if (error) {
+        console.error(error);
+    }
 
     return (
         isLoading ? <Loader /> : isError ? <p className="text-red-500 bold">Unable to fetch data {(error as any).error}</p> :
@@ -74,16 +78,16 @@ const Employees = () => {
                         </div>
                     </div>
                     <div className="flex justify-end mt-4">
-                            <Pagination
-                                hasNextPage={data?.data?.hasNextPage ?? false}
-                                hasPreviousPage={data?.data?.hasPreviousPage ?? false}
-                                activePage={data?.data?.page ?? 1}
-                                onNext={() => { setPage({ ...page, page: page.page + 1 }) }}
-                                onPrevious={() => { setPage({ ...page, page: page.page - 1 }) }}
-                                pageSize={data?.data?.pageSize ?? 1}
-                                totalCount={data?.data?.totalCount ?? 1}
+                        <Pagination
+                            hasNextPage={data?.data?.hasNextPage ?? false}
+                            hasPreviousPage={data?.data?.hasPreviousPage ?? false}
+                            activePage={data?.data?.page ?? 1}
+                            onNext={() => { setPage({ ...page, page: page.page + 1 }) }}
+                            onPrevious={() => { setPage({ ...page, page: page.page - 1 }) }}
+                            pageSize={data?.data?.pageSize ?? 1}
+                            totalCount={data?.data?.totalCount ?? 1}
                             onSetPage={(p) => { setPage({ ...page, page: p }) }}
-                            />
+                        />
                     </div>
                 </div>
                 <Modal isOpen={isOpen} onClose={() => { dispatch(closeModal()) }} isFullscreen={false} className="max-w-[700px] m-4">
