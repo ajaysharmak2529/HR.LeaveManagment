@@ -31,6 +31,13 @@ namespace HR.LeaveManagement.Persistence.Repositories
 
             return await PageList<LeaveRequest>.CreateAsync(query, page, pageSize);
         }
+        public async Task<PageList<LeaveRequest>> GetAllPendingLeaveRequestsWithDetailAsync(int page, int pageSize)
+        {
+            var query = _dbContext.LeaveRequests.Where(x=> x.Cancelled == false && x.Approved == false)
+                .Include(x=>x.LeaveType)
+                .OrderByDescending(x => x.DateCreated);
+            return await PageList<LeaveRequest>.CreateAsync(query, page, pageSize);
+        }
         public async Task<PageList<LeaveRequest>> GetAllEmployeeLeaveRequestsWithDetailAsync(string userId, int page, int pageSize)
         {
             var query = _dbContext.LeaveRequests
@@ -40,7 +47,6 @@ namespace HR.LeaveManagement.Persistence.Repositories
 
             return await PageList<LeaveRequest>.CreateAsync(query, page, pageSize);
         }
-
         public async Task<LeaveRequest> GetLeaveRequestWithDetailAsync(int id)
         {
             var leaveRequest = await _dbContext.LeaveRequests

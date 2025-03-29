@@ -33,6 +33,19 @@ namespace HR.LeaveManagement.Api.Controllers
                 return BadRequest(ApiResponse<string>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
             }
         }
+        [HttpGet("GetAll/Pending")]
+        public async Task<ActionResult> Pending(int? page = 1, int? pageSize = 10)
+        {
+            try
+            {
+                var LeaveRequests = await _mediator.Send(new GetPendingLeaveRequestListRequest() { Page = page, PageSize = pageSize });
+                return Ok(ApiResponse<PageList<LeaveRequestListDto>>.Success(LeaveRequests, StatusCodes.Status200OK));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ApiResponse<string>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
+            }
+        }
 
         [HttpGet("{id}/Get")]
         public async Task<ActionResult> Get(int id)

@@ -11,7 +11,7 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace HR.LeaveManagement.Application.Features.LeaveRequests.Requests.Commands;
+namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Queries;
 
 public class GetEmployeeLeaveRequestListRequestHandler : IRequestHandler<GetEmployeeLeaveRequestListRequest, PageList<LeaveRequestListDto>>
 {
