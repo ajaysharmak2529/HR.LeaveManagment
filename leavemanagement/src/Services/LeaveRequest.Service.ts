@@ -9,6 +9,10 @@ const LeaveRequestService = api.injectEndpoints({
             query: (query) => `/LeaveRequest/GetAll?page=${query.page}&pageSize=${query.pageSize}`,
             providesTags: ["LeaveRequest"]
         }),
+        getAllPandingLeaveRequests: builder.query<ApiResponse<PageList<LeaveRequestType[]>>, { page: number, pageSize: number }>({
+            query: (query) => `/LeaveRequest/GetAll/Pending?page=${query.page}&pageSize=${query.pageSize}`,
+            providesTags: ["LeaveRequest"]
+        }),
         getEmployeeLeaveRequests: builder.query<ApiResponse<PageList<LeaveRequestType[]>>, { page: number, pageSize: number }>({
             query: (query) => `/LeaveRequest/Employee?page=${query.page}&pageSize=${query.pageSize}`,
             providesTags: ["LeaveRequest"]
@@ -50,4 +54,13 @@ const LeaveRequestService = api.injectEndpoints({
     })
 });
 
-export const { useAddLeaveRequestMutation, useDeleteLeaveRequestMutation, useGetLeaveRequestQuery, useGetAllLeaveRequestsQuery, useGetEmployeeLeaveRequestsQuery, useUpdateLeaveRequestMutation, useChnageApprovalLeaveRequestMutation } = LeaveRequestService;
+export const {
+    useAddLeaveRequestMutation,
+    useDeleteLeaveRequestMutation,
+    useGetLeaveRequestQuery,
+    useGetAllLeaveRequestsQuery,
+    useGetEmployeeLeaveRequestsQuery,
+    useUpdateLeaveRequestMutation,
+    useChnageApprovalLeaveRequestMutation,
+    useGetAllPandingLeaveRequestsQuery
+} = LeaveRequestService;

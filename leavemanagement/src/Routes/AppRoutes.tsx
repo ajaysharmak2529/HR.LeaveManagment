@@ -6,6 +6,7 @@ import AdminLayout from "../Pages/Shared/AdminLayout";
 import AdminLeaveRequests from "../Pages/DashboardPages/AdminLeaveRequests";
 import Index from "../Pages/UserPages/Index";
 import EmployeeLeaveRequests from "../Pages/UserPages/EmployeeLeaveRequests";
+import PandingLeaveRequest from "../Pages/UserPages/PandingLeaveRequest";
 import LeaveTypes from "../Pages/DashboardPages/LeaveTypes";
 import Employees from "../Pages/DashboardPages/Employees";
 import Dashboard from "../Pages/DashboardPages/Dashboard";
@@ -36,6 +37,7 @@ const AppRoutes = () => {
                         <Route path="/dashboard/leave-types" element={<LeaveTypes />} />
                         <Route path="/dashboard/leave-requests" element={<AdminLeaveRequests />} />
                         <Route path="/dashboard/leave-allocations" element={<AdminLeaveAllocations />} />
+                        <Route path="/dashboard/pendnig-leave-request" element={<PandingLeaveRequest />} />
                         <Route path="/dashboard/leave-employees" element={<Employees />} />
                     </Route>
                 </Route>

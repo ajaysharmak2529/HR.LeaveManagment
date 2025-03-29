@@ -8,11 +8,7 @@ import Backdrop from '../../Components/Backdrop';
 
 const AdminLayout = () => {
     const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-    const { isExpanded, isHovered, isMobileOpen, isMobile } = useSelector((state: RootState) => state.Sidebar);
-    const toggleSidebar = () => {
-        setIsSidebarOpen(!isSidebarOpen);
-        document.body.style.overflow = isSidebarOpen ? "" : "hidden";
-    };
+    const { isExpanded, isHovered, isMobileOpen } = useSelector((state: RootState) => state.Sidebar);
 
     useEffect(() => {
         const handleResize = () => {
