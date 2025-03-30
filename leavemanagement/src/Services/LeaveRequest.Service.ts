@@ -5,16 +5,12 @@ import { CreateLeaveRequest, LeaveRequestType, UpdateLeaveRequest, ChangeApprove
 
 const LeaveRequestService = api.injectEndpoints({
     endpoints: (builder) => ({
-        getAllLeaveRequests: builder.query<ApiResponse<PageList<LeaveRequestType[]>>, { page: number, pageSize: number }>({
-            query: (query) => `/LeaveRequest/GetAll?page=${query.page}&pageSize=${query.pageSize}`,
+        getAllLeaveRequests: builder.query<ApiResponse<PageList<LeaveRequestType[]>>, { page: number, pageSize: number, status:string }>({
+            query: (query) => `/LeaveRequest/GetAll?page=${query.page}&pageSize=${query.pageSize}&status=${query.status}`,
             providesTags: ["LeaveRequest"]
         }),
-        getAllPandingLeaveRequests: builder.query<ApiResponse<PageList<LeaveRequestType[]>>, { page: number, pageSize: number }>({
-            query: (query) => `/LeaveRequest/GetAll/Pending?page=${query.page}&pageSize=${query.pageSize}`,
-            providesTags: ["LeaveRequest"]
-        }),
-        getEmployeeLeaveRequests: builder.query<ApiResponse<PageList<LeaveRequestType[]>>, { page: number, pageSize: number }>({
-            query: (query) => `/LeaveRequest/Employee?page=${query.page}&pageSize=${query.pageSize}`,
+        getEmployeeLeaveRequests: builder.query<ApiResponse<PageList<LeaveRequestType[]>>, { page: number, pageSize: number, status: string }>({
+            query: (query) => `/LeaveRequest/Employee?page=${query.page}&pageSize=${query.pageSize}&status=${query.status}`,
             providesTags: ["LeaveRequest"]
         }),
         getLeaveRequest: builder.query<ApiResponse<LeaveRequestType>, number>({
@@ -62,5 +58,4 @@ export const {
     useGetEmployeeLeaveRequestsQuery,
     useUpdateLeaveRequestMutation,
     useChnageApprovalLeaveRequestMutation,
-    useGetAllPandingLeaveRequestsQuery
 } = LeaveRequestService;

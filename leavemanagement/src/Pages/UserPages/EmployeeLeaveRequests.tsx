@@ -7,7 +7,8 @@ import { useState } from "react";
 const EmployeeLeaveRequests = () => {
 
     const [page, setPage] = useState({ page: 1, pageSize: 10 });
-    const { isLoading, isError, error, data } = useGetEmployeeLeaveRequestsQuery(page);
+    const [selected, setSelected] = useState("Pending");
+    const { isLoading, isError, error, data } = useGetEmployeeLeaveRequestsQuery({ ...page, status: selected });
 
     if (error) {
         console.error(error);
@@ -20,6 +21,32 @@ const EmployeeLeaveRequests = () => {
                     <h3 className="mb-4 font-semibold text-gray-800 text-theme-xl dark:text-white/90 sm:text-2xl">
                         Leave Requests
                     </h3>
+                    <div className="flex flex-auto sm:flex-col justify-evenly border rounded-md w-100 mb-5">
+                        {[
+                            { id: "Pending", label: "Pending" },
+                            { id: "Approved", label: "Approved" },
+                            { id: "Cancelled", label: "Cancelled" },
+                        ].map(({ id, label }) => (
+                            <button
+                                key={id}
+                                className={`border-none px-2 py-1 w-full rounded-md ${selected === id ? "bg-blue-600 text-white" : "dark:text-gray-400"
+                                    }`}
+                                onClick={() => setSelected(id)}
+                            >
+                                <input
+                                    type="radio"
+                                    className="hidden"
+                                    id={id}
+                                    name="searchOption"
+                                    checked={selected === id}
+                                    onChange={() => setSelected(id)}
+                                />
+                                <label className="cursor-pointer" htmlFor={id}>
+                                    {label}
+                                </label>
+                            </button>
+                        ))}
+                    </div>
                     <div className="overflow-hidden rounded-xl border border-gray-200 bg-white dark:border-white/[0.05] dark:bg-white/[0.03]">
                         <div className="max-w-full overflow-x-auto">
                             <div className="min-w-[720px]">

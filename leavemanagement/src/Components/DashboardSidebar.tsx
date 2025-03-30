@@ -41,8 +41,7 @@ const navItems: NavItem[] = [
         name: "Leave Request",
         icon: <BsPersonCircle />,
         subItems: [
-            { name: "All Leave Requests", path: "/dashboard/pendnig-leave-request", pro: false },
-            { name: "Pendning Leave Requests", path: "/dashboard/pendnig-leave-request", pro: false },
+            { name: "All Leave Requests", path: "/dashboard/leave-requests", pro: false },
         ],
     },
 ];

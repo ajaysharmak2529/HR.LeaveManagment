@@ -10,7 +10,7 @@ const LeaveAllocationService = api.injectEndpoints({
         }),
         getEmployeeLeaveAllocarions: builder.query<ApiResponse<PageList<LeaveAloocationType[]>>, { page: number, pageSize: number }>({
             query: (query) => `/LeaveAllocation/Employee?page=${query.page}&pageSize=${query.pageSize}`,
-            providesTags: ['LeaveAllocation']
+            providesTags: ['LeaveAllocation', "LeaveRequest"]
         }),
         getAdminLeaveAllocarions: builder.query<ApiResponse<PageList<AdminLeaveAloocationType[]>>, { page: number, pageSize: number }>({
             query: (query) => `/LeaveAllocation/Admin?page=${query.page}&pageSize=${query.pageSize}`,
