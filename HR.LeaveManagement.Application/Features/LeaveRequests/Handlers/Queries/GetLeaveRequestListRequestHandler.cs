@@ -22,7 +22,7 @@ namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Queries
         }
         public async Task<PageList<LeaveRequestListDto>> Handle(GetLeaveRequestListRequest request, CancellationToken cancellationToken)
         {
-            var leaveRequests = await _unitOfWork.LeaveRequests.GetAllLeaveRequestsWithDetailAsync(request.Page!.Value,request.PageSize!.Value);
+            var leaveRequests = await _unitOfWork.LeaveRequests.GetAllLeaveRequestsWithDetailAsync(request.Page!.Value,request.PageSize!.Value, request.Status);
 
             var items = _mapper.Map<List<LeaveRequestListDto>>(leaveRequests.Items);
 

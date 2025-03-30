@@ -8,4 +8,5 @@ public class GetEmployeeLeaveRequestListRequest: IRequest<PageList<LeaveRequestL
 {
     public int? Page { get; set; }
     public int? PageSize { get; set; }
+    public string Status { get; set; } = string.Empty;
 }

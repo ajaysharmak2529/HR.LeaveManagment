@@ -2,7 +2,9 @@
 using HR.LeaveManagement.Application.Models;
 using HR.LeaveManagement.Domain;
 using Microsoft.EntityFrameworkCore;
+using System;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Threading.Tasks;
 
 namespace HR.LeaveManagement.Persistence.Repositories
@@ -23,9 +25,11 @@ namespace HR.LeaveManagement.Persistence.Repositories
             await _dbContext.SaveChangesAsync();
         }
 
-        public async Task<PageList<LeaveRequest>> GetAllLeaveRequestsWithDetailAsync(int page, int pageSize)
+        public async Task<PageList<LeaveRequest>> GetAllLeaveRequestsWithDetailAsync(int page, int pageSize, string status)
         {
-            var query = _dbContext.LeaveRequests
+            var exp = GetWhereCondition(status);
+
+            var query = _dbContext.LeaveRequests.Where(exp)
                 .Include(x=>x.LeaveType)
                 .OrderByDescending(x => x.DateCreated);
 
@@ -38,10 +42,12 @@ namespace HR.LeaveManagement.Persistence.Repositories
                 .OrderByDescending(x => x.DateCreated);
             return await PageList<LeaveRequest>.CreateAsync(query, page, pageSize);
         }
-        public async Task<PageList<LeaveRequest>> GetAllEmployeeLeaveRequestsWithDetailAsync(string userId, int page, int pageSize)
+        public async Task<PageList<LeaveRequest>> GetAllEmployeeLeaveRequestsWithDetailAsync(string userId, int page, int pageSize, string status)
         {
+          var exp =  GetWhereCondition(status);
+
             var query = _dbContext.LeaveRequests
-                .Where(x=>x.EmployeeId == userId)
+                .Where(x=>x.EmployeeId == userId).Where(exp)
                 .Include(x=>x.LeaveType)
                 .OrderByDescending(x => x.DateCreated);
 
@@ -73,11 +79,11 @@ namespace HR.LeaveManagement.Persistence.Repositories
         }
         public async Task<int> GetTotalLeaveRequest()
         {
-           return await _dbContext.LeaveRequests.CountAsync();                
+           return await _dbContext.LeaveRequests.CountAsync();  //.Where(x=>x.Cancelled == false && x.Approved == false)            
         }
         public async Task<int> GetPendingLeaveRequest()
         {
-           return await _dbContext.LeaveRequests.Where(x=> x.Approved == false).CountAsync();                
+           return await _dbContext.LeaveRequests.Where(x=> x.Approved == false & x.Cancelled == false).CountAsync();                
         }
         public async Task<int> GetApprovedLeaveRequest()
         {
@@ -86,6 +92,17 @@ namespace HR.LeaveManagement.Persistence.Repositories
         public async Task<int> GetRejectedLeaveRequest()
         {
            return await _dbContext.LeaveRequests.Where(x=>x.Cancelled == true).CountAsync();                
+        }
+
+        public static Expression<Func<LeaveRequest, bool>> GetWhereCondition(string status)
+        {
+            return status switch
+            {
+                "Pending" => x => x.Approved == false && x.Cancelled == false,
+                "Cancelled" => x => x.Approved == false && x.Cancelled == true,
+                "Approved" => x => x.Approved == true && x.Cancelled == false,
+                _ => x => true
+            };
         }
     }
 }

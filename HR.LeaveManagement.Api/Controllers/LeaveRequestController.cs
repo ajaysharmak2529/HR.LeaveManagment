@@ -21,24 +21,11 @@ namespace HR.LeaveManagement.Api.Controllers
         }
 
         [HttpGet("GetAll")]
-        public async Task<ActionResult> Get(int? page = 1, int? pageSize = 10)
+        public async Task<ActionResult> Get(int? page = 1, int? pageSize = 10,string status = "Pending")
         {
             try
             {
-                var LeaveRequests = await _mediator.Send(new GetLeaveRequestListRequest() { Page = page, PageSize = pageSize });
-                return Ok(ApiResponse<PageList<LeaveRequestListDto>>.Success(LeaveRequests, StatusCodes.Status200OK));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ApiResponse<string>.Fail("Something went wrong", StatusCodes.Status500InternalServerError, new string[] { ex.Message }));
-            }
-        }
-        [HttpGet("GetAll/Pending")]
-        public async Task<ActionResult> Pending(int? page = 1, int? pageSize = 10)
-        {
-            try
-            {
-                var LeaveRequests = await _mediator.Send(new GetPendingLeaveRequestListRequest() { Page = page, PageSize = pageSize });
+                var LeaveRequests = await _mediator.Send(new GetLeaveRequestListRequest() { Page = page, PageSize = pageSize, Status = status });
                 return Ok(ApiResponse<PageList<LeaveRequestListDto>>.Success(LeaveRequests, StatusCodes.Status200OK));
             }
             catch (Exception ex)
@@ -150,11 +137,11 @@ namespace HR.LeaveManagement.Api.Controllers
         }
 
         [HttpGet("Employee")]
-        public async Task<IActionResult> GetEmployeeLeaveRequest(int? page = 1, int? pageSize = 10)
+        public async Task<IActionResult> GetEmployeeLeaveRequest(int? page = 1, int? pageSize = 10, string? status = "Pending")
         {
             try
             {
-                var list = await _mediator.Send(new GetEmployeeLeaveRequestListRequest() { Page = page, PageSize = pageSize });
+                var list = await _mediator.Send(new GetEmployeeLeaveRequestListRequest() { Page = page, PageSize = pageSize, Status = status! });
                 return Ok(ApiResponse<PageList<LeaveRequestListDto>>.Success(list, StatusCodes.Status200OK));
             }
             catch (Exception ex)

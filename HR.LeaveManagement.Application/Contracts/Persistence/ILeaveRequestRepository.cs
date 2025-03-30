@@ -8,9 +8,9 @@ namespace HR.LeaveManagement.Application.Contracts.Persistence
     public interface ILeaveRequestRepository : IGenericRepository<LeaveRequest>
     {
         Task<LeaveRequest> GetLeaveRequestWithDetailAsync(int id);
-        Task<PageList<LeaveRequest>> GetAllLeaveRequestsWithDetailAsync(int page, int pageSize);
+        Task<PageList<LeaveRequest>> GetAllLeaveRequestsWithDetailAsync(int page, int pageSize, string status);
         Task<PageList<LeaveRequest>> GetAllPendingLeaveRequestsWithDetailAsync(int page, int pageSize);
-        Task<PageList<LeaveRequest>> GetAllEmployeeLeaveRequestsWithDetailAsync(string userId, int page, int pageSize);
+        Task<PageList<LeaveRequest>> GetAllEmployeeLeaveRequestsWithDetailAsync(string userId, int page, int pageSize, string status);
         Task ChangeLeaveRequestApproval(LeaveRequest leaveRequest, bool? approvalStatus);
         Task<int> GetEmployeeTotalLeaveRequest(string userId);
         Task<int> GetEmployeePendingLeaveRequest(string userId);
