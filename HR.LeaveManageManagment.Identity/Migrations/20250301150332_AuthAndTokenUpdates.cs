@@ -167,7 +167,7 @@ namespace HR.LeaveManagement.Identity.Migrations
                 values: new object[,]
                 {
                     { "cac43a6e-f7bb-4448-baaf-1add431ccbbf", null, "Employee", "EMPLOYEE" },
-                    { "cbc43a8e-f7bb-4445-baaf-1add431ffbbf", null, "Administrator", "ADMINISTRATOR" }
+                    { "cbc43a8e-f7bb-4445-baaf-1add431ffbbf", null, "Admin", "ADMIN" }
                 });
 
             migrationBuilder.InsertData(
