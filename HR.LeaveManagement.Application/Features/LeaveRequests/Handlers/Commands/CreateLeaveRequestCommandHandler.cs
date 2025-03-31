@@ -16,7 +16,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-
 namespace HR.LeaveManagement.Application.Features.LeaveRequests.Handlers.Commands;
 public class CreateLeaveRequestCommandHandler : IRequestHandler<CreateLeaveRequestCommand, BaseCommandResponse>
 {
@@ -83,11 +82,11 @@ public class CreateLeaveRequestCommandHandler : IRequestHandler<CreateLeaveReque
                 };
                 try
                 {
-                    //await _emailSender.SendEmailAsync(email);
+                    await _emailSender.SendEmailAsync(email);
                 }
                 catch (System.Exception ex)
                 {
-                    // Log error or handle exception, but don't throw
+                    
                 }
             }
 
