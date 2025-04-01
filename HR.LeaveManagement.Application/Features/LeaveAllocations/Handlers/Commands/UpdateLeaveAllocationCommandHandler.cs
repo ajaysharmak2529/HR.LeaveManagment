@@ -5,7 +5,9 @@ using HR.LeaveManagement.Application.Exceptions;
 using HR.LeaveManagement.Application.Features.LeaveAllocations.Requests.Commands;
 using HR.LeaveManagement.Application.Responses;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using System.Linq;
+using System.Text.Json;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -15,11 +17,13 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
     {
         private readonly IUnitOfWork _unitOfWork;
         private readonly IMapper _mapper;
+        private readonly ILogger<UpdateLeaveAllocationCommandHandler> logger;
 
-        public UpdateLeaveAllocationCommandHandler(IUnitOfWork unitOfWork, IMapper mapper)
+        public UpdateLeaveAllocationCommandHandler(IUnitOfWork unitOfWork, IMapper mapper, ILogger<UpdateLeaveAllocationCommandHandler> logger)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            this.logger = logger;
         }
         public async Task<BaseCommandResponse> Handle(UpdateLeaveAllocationCommand request, CancellationToken cancellationToken)
         {
@@ -51,6 +55,8 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
                 response.Success = false;
                 response.Errors = new System.Collections.Generic.List<string> { ex.Message };
                 response.Message = "Update Leave Allocation Failed";
+                logger.LogError("failed to update leave allocation request json {json}", JsonSerializer.Serialize(request.LeaveAllocationDto));
+                logger.LogError(ex, ex.Message);
             }
             return response;
         }

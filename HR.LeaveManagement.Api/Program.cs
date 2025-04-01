@@ -3,7 +3,9 @@ using HR.LeaveManagement.Infrastructure;
 using HR.LeaveManagement.Persistence;
 using HR.LeaveManagement.Identity;
 using HR.LeaveManagement.Application.JsonConverters;
-using Newtonsoft.Json.Serialization;
+using Serilog;
+
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -22,17 +24,24 @@ builder.Services.AddCors(o =>
         .AllowAnyHeader()
         .SetIsOriginAllowed(origin=> true));
 });
+
+builder.Host.UseSerilog((context, services, loggerConfiguration) =>
+{
+    loggerConfiguration
+        .ReadFrom.Configuration(context.Configuration)
+        .ReadFrom.Services(services);
+});
+
+
 builder.Services.AddControllers().AddJsonOptions(options =>
 {
     options.JsonSerializerOptions.Converters.Add(new CustomDateTimeConverter());
 });
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -46,15 +55,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseCors("CorsPolicy");
-
-//app.UseCors(builder =>
-//{
-//    builder.AllowAnyOrigin();
-//    builder.AllowAnyHeader();
-//    builder.AllowAnyMethod();
-//    builder.SetIsOriginAllowed(origin => true);
-//});
-
+app.UseSerilogRequestLogging();
 app.MapControllers();
 
 app.Run();

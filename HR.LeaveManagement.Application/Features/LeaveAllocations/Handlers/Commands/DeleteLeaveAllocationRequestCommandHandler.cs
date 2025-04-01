@@ -4,6 +4,7 @@ using HR.LeaveManagement.Application.Features.LeaveAllocations.Requests.Commands
 using HR.LeaveManagement.Application.Responses;
 using HR.LeaveManagement.Domain;
 using MediatR;
+using Microsoft.Extensions.Logging;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -12,10 +13,12 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
     public class DeleteLeaveAllocationRequestCommandHandler : IRequestHandler<DeleteLeaveAllocationRequestCommand, BaseCommandResponse>
     {
         private readonly IUnitOfWork _unitOfWork;
+        private readonly ILogger<DeleteLeaveAllocationRequestCommandHandler> logger;
 
-        public DeleteLeaveAllocationRequestCommandHandler(IUnitOfWork unitOfWork)
+        public DeleteLeaveAllocationRequestCommandHandler(IUnitOfWork unitOfWork, ILogger<DeleteLeaveAllocationRequestCommandHandler> logger)
         {
             _unitOfWork = unitOfWork;
+            this.logger = logger;
         }
         public async Task<BaseCommandResponse> Handle(DeleteLeaveAllocationRequestCommand request, CancellationToken cancellationToken)
         {
@@ -40,8 +43,10 @@ namespace HR.LeaveManagement.Application.Features.LeaveAllocations.Handlers.Comm
             catch (System.Exception ex)
             {
                 response.Success = false;
-                response.Message = $"throw exception";
+                response.Message = $"an unhandled exception";
                 response.Errors = new System.Collections.Generic.List<string> { ex.Message };
+                
+                logger.LogError(ex, "failed to delete allocation {AllocationId}",request.Id);
             }
             return response;
         }
